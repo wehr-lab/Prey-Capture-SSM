@@ -4,7 +4,7 @@ function tile_video_clips
 % not all epochs have the same duration (obviously), so you can either loop
 % the shorter ones or grey them out when they're done
 
-%use this to process a previous run
+%use this to process a previous run:
 state_epoch_clips_dir='state_epoch_clips-22-Jul-2020';
 %use this for a new run (i.e. default to "today" directory):
 %state_epoch_clips_dir=sprintf('state_epoch_clips-%s',datestr(today));
