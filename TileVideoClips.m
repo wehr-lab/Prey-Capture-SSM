@@ -4,14 +4,21 @@ function tile_video_clips
 % not all epochs have the same duration (obviously), so you can either loop
 % the shorter ones or grey them out when they're done
 
-%use this to process a previous run:
-state_epoch_clips_dir='state_epoch_clips-22-Jul-2020';
-%use this for a new run (i.e. default to "today" directory):
+% use this for a new run (i.e. default to "today" directory):
 %state_epoch_clips_dir=sprintf('state_epoch_clips-%s',datestr(today));
+% OR
+% use this to process a previous run:
+state_epoch_clips_dir='state_epoch_clips-22-Jul-2020';
 
-rootdir='/Users/mikewehr/Documents/Analysis/PreyCapture data';
-%rootdir='\\Users\\Kat\\Resilio Sync\\Prey Capture\\matlab code July 2020\\'
-
+switch char(java.net.InetAddress.getLocalHost.getHostName)
+    case 'Transporter.local'
+        rootdir='/Users/mikewehr/Documents/Analysis/PreyCapture data';
+    case 'kats computer here'
+        rootdir='\\Users\\Kat\\Resilio Sync\\Prey Capture\\matlab code July 2020\\'
+    otherwise
+        fprintf('don''t recognize computer %s', java.net.InetAddress.getLocalHost.getHostName)
+        rootdir=pwd;
+end
 cd( rootdir)
 cd(state_epoch_clips_dir)
 
