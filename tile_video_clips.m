@@ -17,7 +17,7 @@ cd(state_epoch_clips_dir)
 
 n=0;
 
-arraysize='5x5';
+arraysize='3x3';
 %could be '3x3', '4x4', '5x5', '6x6'
 fprintf('\ntiling clips in a %s array', arraysize);
 
@@ -87,6 +87,7 @@ end
 % For each state k, we tile the epochs into a ssm_state_vid-comp-k
 % This could be either 3x3, 4x4, etc
 tic
+fprintf('\nTiling video clips...')
 switch arraysize
     case '3x3'
         max_num_epochs=9;
@@ -111,7 +112,6 @@ switch arraysize
                 fprintf(repmat('\b',1,nbytes))
                 nbytes = fprintf('\tframe %d of %d', f, maxnumframes);
                 for  ei=1:max_num_epochs
-                    out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp3x3');
                     e=sNumFramesi(k,ei);
                     if isempty(v{ei})
                         vidFrame=dummy;
@@ -177,7 +177,6 @@ switch arraysize
                 fprintf(repmat('\b',1,nbytes))
                 nbytes = fprintf('\tframe %d of %d', f, maxnumframes);
                 for  ei=1:max_num_epochs
-                    out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp3x3');
                     e=sNumFramesi(k,ei);
                     if isempty(v{ei})
                         vidFrame=dummy;
@@ -257,7 +256,6 @@ switch arraysize
                 fprintf(repmat('\b',1,nbytes))
                 nbytes = fprintf('\tframe %d of %d', f, maxnumframes);
                 for  ei=1:max_num_epochs
-                    out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp3x3');
                     e=sNumFramesi(k,ei);
                     if isempty(v{ei})
                         vidFrame=dummy;
@@ -291,7 +289,7 @@ switch arraysize
                     elseif ei==9
                         newFrame(h+1:2*h, 3*w+1:4*w,:)=vidFrame;
                     elseif ei==10
-                        newFrame(h+1:2*h, 4*w+1:4*w,:)=vidFrame;
+                        newFrame(h+1:2*h, 4*w+1:5*w,:)=vidFrame;
                         
                     elseif ei==11
                         newFrame(2*h+1:3*h, 0*w+1:1*w,:)=vidFrame;
@@ -355,7 +353,6 @@ switch arraysize
                 fprintf(repmat('\b',1,nbytes))
                 nbytes = fprintf('\tframe %d of %d', f, maxnumframes);
                 for  ei=1:max_num_epochs
-                    out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp3x3');
                     e=sNumFramesi(k,ei);
                     if isempty(v{ei})
                         vidFrame=dummy;
@@ -458,162 +455,11 @@ end
 fprintf('\n')
 toc
 
-% % for k=[1:num_states]
-% %     out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, sprintf('ssm_state_vid-comp-%d', k));
-% %     vout = VideoWriter(out_movie_filename, 'MPEG-4');
-% %     open(vout);
-% %     for ei=1:max_num_epochs
-% %         e=sNumFramesi(k,ei);
-% %         in_movie_filename=fullfile(rootdir, state_epoch_clips_dir, sprintf('ssm_state_epoch_clip-%d-%d.mp4', k, e));
-% %         try
-% %             v{ei} = VideoReader(in_movie_filename);
-% %         catch
-% %             v{ei}=[];
-% %         end
-% %     end
-% %
-% %     fprintf('\nk %d:', k)
-% %     fprintf(' %d', sNumFrames(k,1:10))
-% %     maxnumframes=sNumFrames(k,1);
-% %     nbytes = fprintf('\tframe 0 of %d', maxnumframes);
-% %     for f=1:maxnumframes
-% %         fprintf(repmat('\b',1,nbytes))
-% %         nbytes = fprintf('\tframe %d of %d', f, maxnumframes);
-% %         for  ei=1:max_num_epochs
-% %             switch max_num_epochs
-% %                 case 36
-% %                     %do nothing, the below already does 6x6
-% %                     out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp6x6');
-% %                 case 29 %5x5
-% %                     if any(ei==[6 12 18 24 30 31:36])
-% %                         ei=0;
-% %                     end
-% %                     out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp5x5');
-% %                 case 22 %4x4
-% %                     if any(ei==[5 6 11 12 17 18 23 24 25:36])
-% %                         ei=0;
-% %                     end
-% %                     out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp4x4');
-% %                 case 15 %3x3
-% %                     if any(ei==[4 5 6 10 11 12 16:36])
-% %                         ei=0;
-% %                     end
-% %                     out_movie_filename=fullfile(rootdir, state_epoch_clips_dir, 'all_states_comp3x3');
-% %             end
-% %             if ei==0
-% %                 vidFrame=dummy;
-% %             elseif ei>0
-% %                 e=sNumFramesi(k,ei);
-% %
-% %                 if isempty(v{ei})
-% %                     vidFrame=dummy;
-% %                     %there is no clip, this epoch doesn't exist
-% %                 else
-% %                     if hasFrame(v{ei})
-% %                         vidFrame = readFrame(v{ei}) ;
-% %                     else
-% %                         %vidFrame=dummy;
-% %                         vidFrame = read(v{ei},1) ;
-% %                     end
-% %                 end
-% %                 [h,w,c]=size(vidFrame);
-% %             end
-% %             if ei==0
-% %                 %flag to skip this ei
-% %             elseif ei==1
-% %                 newFrame(1:h, 1:w,:)=vidFrame;
-% %             elseif ei==2
-% %                 newFrame(1:h, w+1:2*w,:)=vidFrame;
-% %             elseif ei==3
-% %                 newFrame(1:h, 2*w+1:3*w,:)=vidFrame;
-% %             elseif ei==4
-% %                 newFrame(1:h, 3*w+1:4*w,:)=vidFrame;
-% %             elseif ei==5
-% %                 newFrame(1:h, 4*w+1:5*w,:)=vidFrame;
-% %             elseif ei==6
-% %                 newFrame(1:h, 5*w+1:6*w,:)=vidFrame;
-% %
-% %
-% %             elseif ei==7
-% %                 newFrame(h+1:2*h, 1:w,:)=vidFrame;
-% %             elseif ei==8
-% %                 newFrame(h+1:2*h, w+1:2*w,:)=vidFrame;
-% %             elseif ei==9
-% %                 newFrame(h+1:2*h, 2*w+1:3*w,:)=vidFrame;
-% %             elseif ei==10
-% %                 newFrame(h+1:2*h, 3*w+1:4*w,:)=vidFrame;
-% %             elseif ei==11
-% %                 newFrame(h+1:2*h, 4*w+1:5*w,:)=vidFrame;
-% %             elseif ei==12
-% %                 newFrame(h+1:2*h, 5*w+1:6*w,:)=vidFrame;
-% %
-% %             elseif ei==13
-% %                 newFrame(2*h+1:3*h, 1:w,:)=vidFrame;
-% %             elseif ei==14
-% %                 newFrame(2*h+1:3*h, w+1:2*w,:)=vidFrame;
-% %             elseif ei==15
-% %                 newFrame(2*h+1:3*h, 2*w+1:3*w,:)=vidFrame;
-% %             elseif ei==16
-% %                 newFrame(2*h+1:3*h, 3*w+1:4*w,:)=vidFrame;
-% %             elseif ei==17
-% %                 newFrame(2*h+1:3*h, 4*w+1:5*w,:)=vidFrame;
-% %             elseif ei==18
-% %                 newFrame(2*h+1:3*h, 5*w+1:6*w,:)=vidFrame;
-% %
-% %             elseif ei==19
-% %                 newFrame(3*h+1:4*h, 1:w,:)=vidFrame;
-% %             elseif ei==20
-% %                 newFrame(3*h+1:4*h, w+1:2*w,:)=vidFrame;
-% %             elseif ei==21
-% %                 newFrame(3*h+1:4*h, 2*w+1:3*w,:)=vidFrame;
-% %             elseif ei==22
-% %                 newFrame(3*h+1:4*h, 3*w+1:4*w,:)=vidFrame;
-% %             elseif ei==23
-% %                 newFrame(3*h+1:4*h, 4*w+1:5*w,:)=vidFrame;
-% %             elseif ei==24
-% %                 newFrame(3*h+1:4*h, 5*w+1:6*w,:)=vidFrame;
-% %
-% %             elseif ei==25
-% %                 newFrame(4*h+1:5*h, 1:w,:)=vidFrame;
-% %             elseif ei==26
-% %                 newFrame(4*h+1:5*h, w+1:2*w,:)=vidFrame;
-% %             elseif ei==27
-% %                 newFrame(4*h+1:5*h, 2*w+1:3*w,:)=vidFrame;
-% %             elseif ei==28
-% %                 newFrame(4*h+1:5*h, 3*w+1:4*w,:)=vidFrame;
-% %             elseif ei==29
-% %                 newFrame(4*h+1:5*h, 4*w+1:5*w,:)=vidFrame;
-% %             elseif ei==30
-% %                 newFrame(4*h+1:5*h, 5*w+1:6*w,:)=vidFrame;
-% %
-% %             elseif ei==31
-% %                 newFrame(5*h+1:6*h, 1:w,:)=vidFrame;
-% %             elseif ei==32
-% %                 newFrame(5*h+1:6*h, w+1:2*w,:)=vidFrame;
-% %             elseif ei==33
-% %                 newFrame(5*h+1:6*h, 2*w+1:3*w,:)=vidFrame;
-% %             elseif ei==34
-% %                 newFrame(5*h+1:6*h, 3*w+1:4*w,:)=vidFrame;
-% %             elseif ei==35
-% %                 newFrame(5*h+1:6*h, 4*w+1:5*w,:)=vidFrame;
-% %             elseif ei==36
-% %                 newFrame(5*h+1:6*h, 5*w+1:6*w,:)=vidFrame;
-% %
-% %
-% %             end
-% %
-% %             imshow(newFrame);shg
-% %
-% %         end
-% %         writeVideo(vout,newFrame)
-% %
-% %     end
-% %     close(vout)
-% % end
-
-return
 % now create a monolithic composite of all states in sequence
-vout = VideoWriter(out_movie_filename, 'MPEG-4');
+tic
+fprintf('\ngenerating monolithic composite...')
+out_movie_filename_mono=fullfile(rootdir, state_epoch_clips_dir, sprintf('all_states_comp%s', arraysize));
+vout = VideoWriter(out_movie_filename_mono, 'MPEG-4');
 open(vout);
 for k=[1:num_states]
     in_movie_filename=fullfile(rootdir, state_epoch_clips_dir, sprintf('/ssm_state_vid-comp-%d.mp4', k));
