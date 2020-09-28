@@ -1,4 +1,4 @@
-function tile_video_clips
+function TileVideoClips
 %load video clips and tile them into composite video
 
 % not all epochs have the same duration (obviously), so you can either loop
@@ -13,7 +13,7 @@ state_epoch_clips_dir='state_epoch_clips-22-Jul-2020';
 switch char(java.net.InetAddress.getLocalHost.getHostName)
     case 'Transporter.local'
         rootdir='/Users/mikewehr/Documents/Analysis/PreyCapture data';
-    case 'kats computer here'
+    case 'DESKTOP-4NTC7RV'
         rootdir='\\Users\\Kat\\Resilio Sync\\Prey Capture\\matlab code July 2020\\'
     otherwise
         fprintf('don''t recognize computer %s', java.net.InetAddress.getLocalHost.getHostName)
