@@ -8,7 +8,7 @@ function TileVideoClips
 %state_epoch_clips_dir=sprintf('state_epoch_clips-%s',datestr(today));
 % OR
 % use this to process a previous run:
-state_epoch_clips_dir='state_epoch_clips-22-Jul-2020';
+state_epoch_clips_dir='state_epoch_clips-28-Sep-2020';
 
 switch char(java.net.InetAddress.getLocalHost.getHostName)
     case 'Transporter.local'
