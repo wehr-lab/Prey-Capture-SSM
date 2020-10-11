@@ -31,10 +31,10 @@ end
 % let's try to keep everything else machine-independent
     
 %make a new output directory with today's date:
-%outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today));
+outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today));
 %OR
 %use an existing output directory
-outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr('10-10-2020'));
+%outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr('10-10-2020'));
 
 cd(outputroot)
 mkdir(outputdir)
