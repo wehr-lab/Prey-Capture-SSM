@@ -45,12 +45,12 @@ ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
 
 %run hmm python code in a system shell
 cmdstr=sprintf('%s %s', pypath, ssmfilename);
-% system(cmdstr)
+system(cmdstr)
 
 PlotPosteriorProbs(outputdir)
 
 PruneTPM(outputdir)
-%GenerateStateEpochClips(local_movie_root, outputdir)
+GenerateStateEpochClips(local_movie_root, outputdir)
 TileVideoClips(outputdir)
 
 

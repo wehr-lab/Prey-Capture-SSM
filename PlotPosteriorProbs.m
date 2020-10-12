@@ -8,8 +8,8 @@ function PlotPosteriorProbs(datadir)
 %load the output of the python code and plot stuff
 %note that the python code uses savemat to save several types of output
 cd(datadir)
-load ssm_posterior_probs.mat
-load training_data
+load ./ssm_posterior_probs.mat
+load ./training_data
 num_states=double(num_states);
 fprintf('\n%d states', num_states)
 %this plots goodness of fit across iterations
