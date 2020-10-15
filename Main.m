@@ -20,7 +20,8 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         %output directory for results and generated video clips
         outputroot='C:\Users\Kat\Resilio Sync\Prey Capture\';
         %local path to python3
-        pypath='/usr/local/bin/python3';
+        pypath='C:\Users\Kat\python'
+        %'/usr/local/bin/anaconda3.exe';
     otherwise
         fprintf('don''t recognize computer %s', java.net.InetAddress.getLocalHost.getHostName)
         return
