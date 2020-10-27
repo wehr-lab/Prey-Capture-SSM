@@ -4,6 +4,7 @@ import numpy
 import ssm
 from scipy import io
 import time
+import os
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
@@ -25,9 +26,10 @@ Z = hmm.most_likely_states(X)
 Ps = hmm.expected_states(X)
 TM = hmm.transitions.transition_matrix
 run_on = time.asctime( time.localtime(time.time()) )
+run_from = os.getcwd()
 
 #save output files using savemat
-mdict={'Z': Z, 'Ps': Ps, 'num_states': num_states, 'obs_dim':obs_dim, 'hmm_lls':hmm_lls, 'TM':TM, 'cov':cov, 'run_on':run_on}
+mdict={'Z': Z, 'Ps': Ps, 'num_states': num_states, 'obs_dim':obs_dim, 'hmm_lls':hmm_lls, 'TM':TM, 'cov':cov, 'run_on':run_on, 'run_from':run_from}
 io.savemat('ssm_posterior_probs.mat', mdict)
 
 
