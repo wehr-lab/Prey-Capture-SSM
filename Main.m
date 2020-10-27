@@ -39,6 +39,7 @@ outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today)
 
 cd(outputroot)
 mkdir(outputdir)
+cd(outputdir)
 ConvertTracksToObservations(groupdatadir, groupdatafilename, outputdir)
 
 [repositorydir,~,~]=fileparts(which(mfilename));
