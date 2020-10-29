@@ -15,7 +15,7 @@ cov="diagonal_gaussian"
 hmm = ssm.HMM(num_states, obs_dim, observations=cov)
 
 #load data using loadmat
-mat=io.loadmat('training_data.mat')
+mat=io.loadmat = ('/Users/Kat/Documents/Analysis/PreyCapture data/training_data.mat')
 X = mat['X']
 
 #fit hmm to data
