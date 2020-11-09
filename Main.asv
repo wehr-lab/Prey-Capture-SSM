@@ -17,7 +17,7 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         % path and filename(s) of group data with DLC tracks
         groupdatadir='C:\Users\Kat\Resilio Sync\Prey Capture\';
         groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; %cell array of filenames
-        local_movie_root='C:\Users\Kat\Resilio Sync\Prey Capture\source videos\';
+        local_movie_root='/Users/mikewehr/Documents/Analysis/PreyCapture data/';
         %output directory for results and generated video clips
         outputroot='C:\Users\Kat\Resilio Sync\Prey Capture\';
         %local path to python3
