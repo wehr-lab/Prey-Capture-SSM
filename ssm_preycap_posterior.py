@@ -15,12 +15,12 @@ cov="diagonal_gaussian"
 hmm = ssm.HMM(num_states, obs_dim, observations=cov)
 
 #load data using loadmat
-mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-09-Nov-2020/training_data.mat') 
+mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-10-Nov-2020/training_data.mat') 
 X = mat['X']
 
 #fit hmm to data
-#N_iters=200
-N_iters=10
+N_iters=200
+#N_iters=10
 hmm_lls = hmm.fit(X, method="em", num_iters=N_iters)
 Z = hmm.most_likely_states(X)
 Ps = hmm.expected_states(X)
