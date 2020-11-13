@@ -5,7 +5,7 @@ function PlotTPM(datadir)
 % Note that now this file only plots stuff, it's not part of the data
 % processing pipeline
 
-cd(datadir)
+cd()
 %load ssm_posterior_probs.mat
 %load training_data
 load pruned_tpm
