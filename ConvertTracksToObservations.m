@@ -38,8 +38,8 @@ for sourcefilenum=1:length(groupdatafilename)
         X(startidx:startidx-1+length(groupdata(i).dazimuth(region(1:end-1))), 10)= groupdata(i).dazimuth(region(1:end-1));
         X(startidx:startidx-1+length(groupdata(i).mouseacceleration(region(1:end-2))), 11)= groupdata(i).mouseacceleration(region(1:end-2));
         X(startidx:startidx-1+length(groupdata(i).cricketacceleration(region(1:end-2))), 12)= groupdata(i).cricketacceleration(region(1:end-2));
-        X(startidx:startidx-1+length(groupdata(i).cricket_thigmo_distance(region)), 13)= groupdata(i).cricket_thigmo_distance(region);
-        X(startidx:startidx-1+length(groupdata(i).mouse_thigmo_distance(region)), 14)= groupdata(i).mouse_thigmo_distance(region);
+    %    X(startidx:startidx-1+length(groupdata(i).cricket_thigmo_distance(region)), 13)= groupdata(i).cricket_thigmo_distance(region);
+    %    X(startidx:startidx-1+length(groupdata(i).mouse_thigmo_distance(region)), 14)= groupdata(i).mouse_thigmo_distance(region);
         drug(startidx:startidx-1+length(groupdata(i).range(region)))=1;
         localframenum(startidx:startidx-1+length(region))=region;
     end
