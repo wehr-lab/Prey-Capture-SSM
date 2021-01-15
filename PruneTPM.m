@@ -61,7 +61,7 @@ hist(durs, 100)
 xlabel('epoch duration');ylabel('count')
 %based on inpection,
 %I'm arbitrarily choosing 2 frames as the cutoff
-epoch_duration_cutoff=2;
+epoch_duration_cutoff=10; %mw 1.15.21
 fprintf('\nexcluding epochs of less than %d frames', epoch_duration_cutoff)
 fprintf('\nexcluding %d of %d epochs (%d %%)',length(find(durs<=epoch_duration_cutoff)), length(durs), round(100*length(find(durs<=epoch_duration_cutoff))/length(durs)))
 
