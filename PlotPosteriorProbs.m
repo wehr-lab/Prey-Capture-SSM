@@ -7,8 +7,8 @@ function PlotPosteriorProbs(datadir)
 
 %load the output of the python code and plot stuff
 %note that the python code uses savemat to save several types of output
-%cd(datadir)
-cd('C:\Users\Kat\Resilio Sync\Prey Capture\HMM_Netanyas_Data\state_epoch_clips-12-Nov-2020')
+cd(datadir)
+%cd('C:\Users\Kat\Resilio Sync\Prey Capture\state_epoch_clips-09-Dec-2020')
 load ./ssm_posterior_probs.mat
 load ./training_data
 num_states=double(num_states);

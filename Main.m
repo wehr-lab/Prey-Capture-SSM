@@ -15,11 +15,11 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         pypath='/usr/local/bin/python3';
     case 'DESKTOP-4NTC7RV'
         % path and filename(s) of group data with DLC tracks
-        groupdatadir='C:\Users\Kat\Resilio Sync\Prey Capture\';
-        groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; %cell array of filenames
-        local_movie_root='C:\Users\Kat\Resilio Sync\Prey Capture\source videos\';
+        groupdatadir='C:\Users\Kat\Resilio Sync\Prey Capture\matlab code July 2020';
+        groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; 
+        local_movie_root='C:\Users\Kat\Resilio Sync\Prey Capture\Netanyas Source Videos\';
         %output directory for results and generated video clips
-        outputroot='C:\Users\Kat\Resilio Sync\Prey Capture\';
+        outputroot='C:\Users\Kat\Resilio Sync\Prey Capture';
         %local path to python3
         pypath='C:\Users\Kat\python'
         %'/usr/local/bin/anaconda3.exe';
