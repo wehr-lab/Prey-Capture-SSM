@@ -11,7 +11,8 @@ import os
 num_states = 10    # number of discrete states
 obs_dim = 14       # dimensionality of observation
 #cov="gaussian"
-cov="diagonal_gaussian"
+#cov="diagonal_gaussian"
+cov='autoregressive'
 hmm = ssm.HMM(num_states, obs_dim, observations=cov)
 
 #load data using loadmat
