@@ -16,7 +16,7 @@ cov='autoregressive'
 hmm = ssm.HMM(num_states, obs_dim, observations=cov)
 
 #load data using loadmat
-mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-06-Jan-2021/training_data.mat') 
+mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-21-Jan-2021/training_data.mat') 
 X = mat['X']
 
 #fit hmm to data
