@@ -8,7 +8,7 @@ import os
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
-num_states = 10    # number of discrete states
+num_states = 20    # number of discrete states
 obs_dim = 14       # dimensionality of observation
 #cov="gaussian"
 #cov="diagonal_gaussian"
@@ -16,7 +16,8 @@ cov='autoregressive'
 hmm = ssm.HMM(num_states, obs_dim, observations=cov)
 
 #load data using loadmat
-mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-06-Jan-2021/training_data.mat') 
+mat=io.loadmat('training_data.mat') 
+#mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-06-Jan-2021/training_data.mat') 
 X = mat['X']
 
 #fit hmm to data

@@ -43,12 +43,12 @@ mkdir(outputdir)
 cd(outputdir)
 ConvertTracksToObservations(groupdatadir, groupdatafilename, outputdir)
 
-[repositorydir,~,~]=fileparts(which(mfilename));
+[repositorydir,~,~]=fileparts(which(mfilename))
 ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
 
 %run hmm python code in a system shell
 cmdstr=sprintf('%s %s', pypath, ssmfilename);
-%system(cmdstr)
+system(cmdstr)
 
 PlotPosteriorProbs(outputdir)
 

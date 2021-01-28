@@ -62,7 +62,8 @@ toc
 
 
 %make a grey dummy frame of the right size
-movie_filename=fullfile(outputdir, 'ssm_state_epoch_clip-1-1.mp4');
+d=dir('ssm_state_epoch_clip*.mp4');
+movie_filename=fullfile(outputdir, d(1).name);
 vobj=VideoReader(movie_filename);
 dummy= read(vobj, 1);
 dummy=uint8(128*ones(size(dummy)));
