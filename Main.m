@@ -18,11 +18,12 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         groupdatadir='/Volumes/Lennon/Documents/Analysis/PreyCapture data';
         groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; %cell array of filenames
         %root directory for source movies
-        local_movie_root='/Volumes/Lennon/Prey Capture/Netanyas Source Videos';
+        local_movie_root='/Volumes/Lennon/Prey Capture/Netanyas Source Videos/';
         %output directory for results and generated video clips
         outputroot='/Volumes/Lennon/Documents/Analysis/PreyCapture data';
         %local path to python3
         pypath='/usr/local/bin/python3';
+        activate_venv_cmd='source ~/virtualenvironment/ssmenv/bin/activate'
     case 'DESKTOP-4NTC7RV'
         % path and filename(s) of group data with DLC tracks
         groupdatadir='C:\Users\Kat\Resilio Sync\Prey Capture\matlab code July 2020';
@@ -58,12 +59,13 @@ ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
 
 %run hmm python code in a system shell
 cmdstr=sprintf('%s %s', pypath, ssmfilename);
-system(cmdstr)
+system(activate_venv_cmd)
+%system(cmdstr)
 
 PlotPosteriorProbs(outputdir)
 
 PruneTPM(outputdir)
-GenerateStateEpochClips(local_movie_root, outputdir)
+GenerateStateEpochClips(local_movie_root,groupdatadir, outputdir)
 TileVideoClips(outputdir)
 
 

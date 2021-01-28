@@ -1,4 +1,4 @@
-function GenerateStateEpochClips(local_movie_root, outputdir)
+function GenerateStateEpochClips(local_movie_root,groupdatadir, outputdir)
 % slice source videos into video clips for each state and epoch (up to some
 % max num epochs)
 %
@@ -9,6 +9,7 @@ function GenerateStateEpochClips(local_movie_root, outputdir)
 %we pull the source movie filenames from either groupdata, or by matching
 %with the filelist. In the future we'll want a more organized way of doing
 %this
+cd(groupdatadir)
 files=lidocaine_new_preycapturefilelist;
 
 

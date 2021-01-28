@@ -41,7 +41,7 @@ for k=1:K
     for i=1:length(starts)
         c=colors(k,:);
         x=xs(starts(i):stops(i));
-        aux.jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
+        jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
     end
 end
 
@@ -72,7 +72,7 @@ for k=1:K
     for i=1:length(starts)
         c=colors(k,:);
         x=starts(i):stops(i);
-        aux.jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
+        jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
     end
 end
 set(gcf, 'pos',[82 1568 1581 420])
