@@ -60,7 +60,7 @@ ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
 %run hmm python code in a system shell
 cmdstr=sprintf('%s %s', pypath, ssmfilename);
 system(activate_venv_cmd)
-%system(cmdstr)
+system(cmdstr)
 
 PlotPosteriorProbs(outputdir)
 

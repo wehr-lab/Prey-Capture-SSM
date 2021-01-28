@@ -455,21 +455,23 @@ vout = VideoWriter(out_movie_filename_mono, 'MPEG-4');
 open(vout);
 for k=[1:num_states]
     in_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));
-    vin = VideoReader(in_movie_filename);
-    fprintf('\nk %d:', k)
-    nbytes=fprintf(' %d/10', 0);
-    for i=1:10
-        fprintf(repmat('\b',1,nbytes))
-        nbytes=fprintf(' %d/10', i);
-        vin.CurrentTime=0;
-        for f=1:vin.NumFrames
-            vidFrame = readFrame(vin) ;
-            str=sprintf('loop %d',i);
-            vidFrame = insertText(vidFrame,[20,125],str,...
-                'FontSize',48,'Font', 'Arial', 'BoxColor', 'g',  ...
-                'BoxOpacity',0.0,'TextColor','red');
-            vidFrame=imresize(vidFrame, .25);
-            writeVideo(vout,vidFrame)
+    if exist(in_movie_filename)==2
+        vin = VideoReader(in_movie_filename);
+        fprintf('\nk %d:', k)
+        nbytes=fprintf(' %d/10', 0);
+        for i=1:10
+            fprintf(repmat('\b',1,nbytes))
+            nbytes=fprintf(' %d/10', i);
+            vin.CurrentTime=0;
+            for f=1:vin.NumFrames
+                vidFrame = readFrame(vin) ;
+                str=sprintf('loop %d',i);
+                vidFrame = insertText(vidFrame,[20,125],str,...
+                    'FontSize',48,'Font', 'Arial', 'BoxColor', 'g',  ...
+                    'BoxOpacity',0.0,'TextColor','red');
+                vidFrame=imresize(vidFrame, .25);
+                writeVideo(vout,vidFrame)
+            end
         end
     end
 end
