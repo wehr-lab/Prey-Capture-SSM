@@ -65,7 +65,7 @@ dirlist = uipickfiles;
 str='';
 for i=1:length(dirlist)
     str=sprintf('%s\n\ndatadir',str);
-    str=sprintf('%s\nPath: %s',str, dirlist{i});
+    str=sprintf('%s\n%s',str, dirlist{i});
 end
 %         %here we could write out any additional experimental details
 %         %loaded from stimulus or notebook files etc
