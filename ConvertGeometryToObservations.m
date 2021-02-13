@@ -1,5 +1,5 @@
 function ConvertGeometryToObservations(DirList, outputdir)
-
+%usage: ConvertGeometryToObservations(DirList, outputdir)
 % generate Observations data from DLC geometry, formatted for input to SSM
 % redesigned Feb 2021 for the new camera data (replaces ConvertTracksToObservations)
 % uses a DirList to load geometry outfiles from data directories
@@ -9,34 +9,38 @@ function ConvertGeometryToObservations(DirList, outputdir)
 
 X=[];
 Groupdata=[];
+if nargin==0, fprintf('\nno input'),return;end
 
 fid=fopen(DirList);
 while 1 %processes until end of file is reached, then breaks
     line=fgetl(fid);
-    waitbar(ftell(fid)/filesize, wb);
     if  ~ischar(line), break, end %break at end of file
     while isempty(line)
         line=fgetl(fid);
     end
     if strcmp(line, 'datadir')
-        datadir=fgetl(fid);     
+        datadir=fgetl(fid);
     end
     
-    geo=load(datadir);
+    cd(datadir)
+    d=dir('geometry-*.mat');
+    geo_file=d(1).name;
+    geo=load(geo_file);
     startidx=size(X,1)+1;
     region=1:geo.numframes;
+    
 end
 
 keyboard
 
 for sourcefilenum=1:length(groupdatafilename)
     load(groupdatafilename{sourcefilenum})
-%     for i=1:length(groupdata)
-%         fprintf('\n%d %d %d %d', groupdata(i).start_frame, ...
-%             groupdata(i).stop_frame, ...
-%             groupdata(i).firstcontact_frame, ...
-%             groupdata(i).start_frame+groupdata(i).firstcontact_frame)
-%     end
+    %     for i=1:length(groupdata)
+    %         fprintf('\n%d %d %d %d', groupdata(i).start_frame, ...
+    %             groupdata(i).stop_frame, ...
+    %             groupdata(i).firstcontact_frame, ...
+    %             groupdata(i).start_frame+groupdata(i).firstcontact_frame)
+    %     end
     
     for i=1:length(groupdata)
         startidx=size(X,1)+1;
@@ -63,7 +67,7 @@ for sourcefilenum=1:length(groupdatafilename)
         localframenum(startidx:startidx-1+length(region))=region;
     end
     
-    if sourcefilenum==1 
+    if sourcefilenum==1
         Groupdata=groupdata;
     else
         sz1=length(Groupdata);
