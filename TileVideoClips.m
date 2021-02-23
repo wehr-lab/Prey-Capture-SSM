@@ -452,6 +452,8 @@ tic
 fprintf('\ngenerating monolithic composite...')
 out_movie_filename_mono=fullfile(outputdir, sprintf('all_states_comp%s', arraysize));
 vout = VideoWriter(out_movie_filename_mono, 'MPEG-4');
+load training_data
+vout.FrameRate=groupdata(1).framerate;
 open(vout);
 for k=[1:num_states]
     in_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));

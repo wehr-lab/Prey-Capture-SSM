@@ -1,6 +1,5 @@
 %Main workflow for running SSM on prey capture data
 % Oct 2020 mw
-%updated for new file hierarchy Feb 2021 (original version is now Main_old
 
 % machine-specific settings
 switch char(java.net.InetAddress.getLocalHost.getHostName)
@@ -53,16 +52,7 @@ outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today)
 cd(outputroot)
 mkdir(outputdir)
 cd(outputdir)
-% [DirList, dirlistpath] = uigetfile('*.txt', 'select DirList of data directories to scan');
-% if isequal(DirList,0) || isequal(dirlistpath,0)
-%     fprintf('\ncancelled')
-%     return
-% end
-DirList=    'processedvids_noephys.txt';
-dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Molly/';
-
-
-ConvertGeometryToObservations(DirList, dirlistpath, outputdir)
+%ConvertTracksToObservations(groupdatadir, groupdatafilename, outputdir)
 
 [repositorydir,~,~]=fileparts(which(mfilename));
 ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
@@ -75,7 +65,7 @@ system(cmdstr);
 PlotPosteriorProbs(outputdir)
 
 PruneTPM(outputdir)
-GenerateStateEpochClips(outputdir)
+GenerateStateEpochClips(local_movie_root,groupdatadir, outputdir)
 TileVideoClips(outputdir)
 
 

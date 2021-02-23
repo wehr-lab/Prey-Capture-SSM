@@ -6,7 +6,7 @@ function DirListBuilder(varargin)
 %
 % the idea of using a machine-readable txt file is that you can annotate
 % the txt file with comments as long as you retain the "datadir" taglines
-% modified from CellListBuilder to just build a list of directories 
+% modified from CellListBuilder to just build a list of directories
 
 global P
 
@@ -56,30 +56,34 @@ if fname
     P.TargetDirList=fullfile(path, fname);
     set(P.TargetDirListDisplay, 'string', {'dir list:',path, fname});
     set([P.SelectDirsh], 'enable', 'on')
+    UpdateListDisplay
 end
-UpdateListDisplay
 
 function SelectDirs(d)
 global P
 dirlist = uipickfiles;
-str='';
-for i=1:length(dirlist)
-    str=sprintf('%s\n\ndatadir',str);
-    str=sprintf('%s\n%s',str, dirlist{i});
-end
-%         %here we could write out any additional experimental details
-%         %loaded from stimulus or notebook files etc
-%     try
-%         nb=load('notebook.mat');
-%         str=sprintf('%s\nStim: %s',str, nb.stimlog(1).protocol_name);
-%         str=sprintf('%s\n', str);
-%     end
+if ~dirlist
+    fprintf('\nuser pressed cancel or forgot to click "done"')
+else
     
-        fid=fopen(P.TargetDirList, 'a'); %absolute path
-        fprintf(fid, '%s', str);
-        fclose(fid);
-        UpdateListDisplay
- 
+    str='';
+    for i=1:length(dirlist)
+        str=sprintf('%s\n\ndatadir',str);
+        str=sprintf('%s\n%s',str, dirlist{i});
+    end
+    %         %here we could write out any additional experimental details
+    %         %loaded from stimulus or notebook files etc
+    %     try
+    %         nb=load('notebook.mat');
+    %         str=sprintf('%s\nStim: %s',str, nb.stimlog(1).protocol_name);
+    %         str=sprintf('%s\n', str);
+    %     end
+    
+    fid=fopen(P.TargetDirList, 'a'); %absolute path
+    fprintf(fid, '%s', str);
+    fclose(fid);
+    UpdateListDisplay
+end
 
 function UpdateListDisplay
 global P

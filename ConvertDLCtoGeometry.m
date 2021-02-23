@@ -21,18 +21,13 @@ elseif nargin==2
     end
 end
 
-
-
-%adjust filenames to work on a mac
-% if ismac
-%     datapath= strrep(datapath, '\', '/');
-%     datapath= strrep(datapath, 'C:', '/Volumes/C');
-%     datapath= strrep(datapath, 'D:', '/Volumes/D');
-% end
-
 cd(datapath)
 d=dir('Behavior_mouse-*.mat');
-if length(d)>1 error('more than one behavior datafile'); end
+if length(d)==0
+    error('no Behavior_mouse file in this directory')
+elseif length(d)>1
+    error('more than one behavior datafile');
+end
 behavior_datafile=d(1).name;
 load(behavior_datafile)
 fprintf('\nloaded %s', behavior_datafile)
@@ -79,16 +74,27 @@ if plotit
 end
 
 % find cricket drop and clean up tracks using probability
-% drop is where probability crosses .5 and stays up for >1s
+% drop is where probability crosses .5 and stays up for >.5s
 %(arbitrary first guess)
 pthresh=.5; % probability threshold
 cricketprob=mean([cricketfront(:,3), cricketback(:,3)], 2);
 goodframes=find(cricketprob>=pthresh); %frames with prob above thresh
 dfgoodframes=diff(goodframes);
-thresh=3; %ignore probability flickers shorter than this
+thresh=20; %ignore probability flickers shorter than this
 i=1;
-while any(dfgoodframes(i:i+round(1*framerate))>=thresh)
+%check how long the cricket was in view, error out (for now) if too short to study
+if length(find(cricketprob>pthresh))<100
+    fprintf('\n\nproblem with %s\n', datapath)
+    error(sprintf('cricket only in view for %.0f ms, exclude this session', 1000*length(find(cricketprob>pthresh))/framerate))
+end
+
+while any(dfgoodframes(i:i+round(.5*framerate))>=thresh) %scan until we don't see diff jumps
     i=i+1;
+    
+    if (i+round(.5*framerate))>length(dfgoodframes)
+        fprintf('\n\nproblem with %s\n', datapath)
+        error('no sustained view of cricket, exclude this session')
+    end
 end
 cricketdropframe=goodframes(i);
 catchframe=goodframes(end); %last known sighting of cricket = catch frame
@@ -485,7 +491,132 @@ if plotit
     % print -dpsc2 'analysis_plots.ps' -append
 end
 
+%fit ellipse to arena to find distance-to-wall
+d=dir('*_labeled.mp4');
+movie_filename2=d(1).name;
+v1 = VideoReader(movie_filename2);
+oneframe = read(v1, 1) ;
+%the circle is an ellipse since cameras are not square I guess
 
+%try loading arena wall points from file
+try
+    figure
+    imagesc(oneframe)
+    hold on
+    wd=pwd;
+    cd ..
+    load arena_wall_ellipse.mat
+    cd(wd)
+catch
+    cd(wd)
+    %ask user to click points to locate arena wall
+    title('click 10 times all around the perimeter wall')
+    [xin,yin]=ginput(10);
+    plot(xin, yin, '*')
+    
+    %fit an ellipse to those points
+    %from https://www.mathworks.com/matlabcentral/answers/98522-how-do-i-fit-an-ellipse-to-my-data-in-matlab
+    a0 = [1000 500 500 500];
+    f = @(a) ((xin-a(1)).^2)/a(2).^2 + ((yin-a(3)).^2)/a(4).^2 -1;
+    options = optimset('Display','iter');
+    af = lsqnonlin(f, a0, [], [], options);
+    t=0:pi/200:2*pi; %arbitrary length 401 points
+    x_wall = af(1) + af(2)*cos(t);
+    y_wall = af(3) + af(4)*sin(t);
+    plot(x_wall, y_wall)
+    plot(round(x_wall), round(y_wall) ,'co')
+    %[xnew, ynew] is a collection of points along the perimeter wall
+    
+    cd ..
+    save arena_wall_ellipse x_wall y_wall
+    % next, for any x,y point, you can find the min distance to the perimeter set
+end %
+plot(round(x_wall(1:10:end)), round(y_wall(1:10:end)) ,'co')
+title('check if the points are on the arena wall') 
+
+clear mouse_thigmo_distance dx dy rm
+for f=1:length(sheadbasex)
+    for t=1:length(x_wall)
+        dx=sheadbasex(f)-x_wall(t);
+        dy=sheadbasey(f)-y_wall(t);
+        rm(t)=sqrt(dx^2 + dy^2);
+    end
+    mouse_thigmo_distance(f)=min(rm);
+end
+
+for f=1:length(scricketx)
+    for t=1:length(x_wall)
+        dx=scricketx(f)-x_wall(t);
+        dy=scrickety(f)-y_wall(t);
+        rc(t)=sqrt(dx^2 + dy^2);
+    end
+    cricket_thigmo_distance(f)=min(rc);
+end
+
+%add derivatives (acceleration etc)
+mouseacceleration=diff(speed);
+cricketacceleration=diff(cspeed);
+drange=diff(range);
+dazimuth=diff(RelativeAzimuth);
+%pad so everything remains the same length
+mouseacceleration=[mouseacceleration;mouseacceleration(end)];
+cricketacceleration=[cricketacceleration;cricketacceleration(end)];
+drange=[drange;drange(end)];
+dazimuth=[dazimuth;dazimuth(end)];
+
+%compute decomposed velocities 
+    %compute theta, the angle between mouse velocity and cricket location
+    % %solve the triangle using the cosine rule
+    % a=COM(t) to COM(t+1) distance
+    % b=COM(t) to cricket(t) distance
+    % c=COM(t+1) to cricket(t) distance
+    % then theta=arccos((a2 + b2 - c2)/(2ab))
+    %and we decompose speed into v0, towards cricket, and v90, orthogonal to
+    %cricket (speed is given by a)
+    %v0=a.*cosd(theta)
+    %v90=a.*sind(theta)
+    %first, for mouse speed
+    clear a b c theta
+    a=speed;
+    b=sqrt((sheadbasex-scricketx).^2 ...
+        + (sheadbasey-scrickety).^2);
+    for f=1:length(sheadbasex)-1
+        c(f)=sqrt((sheadbasex(f+1)-scricketx(f)).^2 ...
+            +(sheadbasey(f+1)-scrickety(f)).^2);
+    end
+    a=a(:);
+    b=b(1:length(a));
+    c=[c(:); c(end)]; %pad to match length of a & b
+    
+    theta=acosd((a.^2+b.^2-c.^2)./(2.*a.*b));
+    v0=a.*cosd(theta);
+    v90=a.*sind(theta);
+    mousevelocity0=v0;
+    mousevelocity90=v90;
+    
+    %second, for cricket speed
+    % a=cricketxy(t) to cricketxy(t+1) distance = cricket speed
+    % b=cricketxy(t) to mouseCOM(t) distance
+    % c=cricketxy(t+1) to mouseCOM(t) distance
+    clear a b c theta
+    a=cspeed;
+    b=sqrt((sheadbasex-scricketx).^2 ...
+        + (sheadbasey-scrickety).^2);
+    for f=1:length(sheadbasex)-1
+        c(f)=sqrt((sheadbasex(f)-scricketx(f+1)).^2 ...
+            +(sheadbasey(f)-scrickety(f+1)).^2);
+    end
+    a=a(:);
+    b=b(1:length(a));
+    c=[c(:); c(end)];
+
+    
+    theta=acosd((a.^2+b.^2-c.^2)./(2.*a.*b));
+    cv0=a.*cosd(theta);
+    cv90=a.*sind(theta);
+    cricketvelocity0=cv0;
+    cricketvelocity90=cv90;
+    
 %save results to local out file
 fprintf('\nsaving to file %s...', outfilename)
 
@@ -500,6 +631,11 @@ save(outfilename, 'speed', 'cspeed', 'range', 'RelativeAzimuth', ...
     'leftearx', 'lefteary', ...
     'rightearx', 'righteary', ...
     'tailbasex', 'tailbasey', ...
+    'mouse_thigmo_distance', 'cricket_thigmo_distance', ...
+    'mouseacceleration', 'cricketacceleration', ...
+    'drange', 'dazimuth', ...
+    'mousevelocity0',    'mousevelocity90', ...
+    'cricketvelocity0',    'cricketvelocity90', ...
     'generated_on', 'generated_by')
 fprintf('  done\n')
 
