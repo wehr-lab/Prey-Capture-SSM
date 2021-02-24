@@ -1,5 +1,7 @@
 function ConvertTracksToObservations(groupdatadir, groupdatafilename, outputdir)
 
+%Usage: ConvertTracksToObservations(groupdatadir, groupdatafilename, outputdir)
+%
 % generate Observations data from DLC tracks, formatted for input to SSM
 % load groupdata and concatenate some variables into a single matrix, and
 % then save as a mat file

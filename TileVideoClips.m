@@ -1,4 +1,6 @@
 function TileVideoClips(outputdir)
+
+%Usage: TileVideoClips(outputdir)
 %load state-epoch video clips and tile them into composite video
 
 % not all epochs have the same duration (obviously), so you can either loop
