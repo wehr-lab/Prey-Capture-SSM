@@ -97,15 +97,17 @@ hist(durs, 100)
 xlabel('post-pruning epoch duration');ylabel('count')
 
 
-%this just lists the surving frames for easy look-up
+%this just lists the surviving frames for easy look-up
 %although I don't think I actually use it
 surviving_frames=[]; %list of surviving frames, in state order not frame order
 surviving_state_list=[]; %corresponding list of states
+survival_mask=zeros(size(Z)); %for every frame in entire dataset, 0 if pruned, 1 if survived pruning
 for k=1:pruned_num_states
     starts=pruned_epochs(k).starts;
     stops=pruned_epochs(k).stops;
     for ne=1:pruned_epochs(k).num_epochs
         frames=starts(ne):stops(ne);
+        survival_mask(frames)=1;
         surviving_frames=[surviving_frames frames];
         surviving_state_list=[surviving_state_list k*ones(size(frames))];
     end
@@ -242,6 +244,7 @@ readme={
     'excluded_states: states pruned for low total occupancy (e.g. <100 frames)'
     'surviving_frames: list of frames after pruning (in state order)'
     'surviving_state_list: list of states after pruning (in state order, corresponds to surviving_frames)'
+    'survival_mask: for every frame in entire dataset, 0 if pruned, 1 if survived pruning'
     'pruned_epochs: structure array of epoch details for each state (after pruning)'
     'pruned_num_epochs: number of epochs in each state, after pruning (same as pruned_epochs.num_epochs)'
     'pruned_num_states: number of hmm states after pruning'
@@ -252,7 +255,7 @@ readme={
     };
 
 save pruned_tpm num_states epoch_duration_cutoff post_probs ...
-     Ps epochs surviving_frames readme ...
+     Ps epochs surviving_frames surviving_state_list survival_mask readme ...
     TM excluded_states pruned_epochs surviving_state_list ...
     X pruned_num_epochs X_description pruned_num_states ...
     tpm DirList hmm_lls Z Zsym ...

@@ -109,11 +109,13 @@ for k=1:pruned_num_states
         absstartframe=pruned_epochs(k).starts(e); %these are relative to X
         absstopframe=pruned_epochs(k).stops(e);
         moviedir=datadirs_by_frame{absstartframe};
-%         movie_filename=sourcemoviefilename{absstartframe};
-%         movie_path=sourcemoviefilepath{absstartframe};
+        
+        % localframenum comes from ConvertGeometryToObservations and
+        % already accounts for trimming from cricket drop frame to catch
+        % frame
         localstartframe=localframenum(absstartframe);
         localstopframe=localframenum(absstopframe);
-        if localstopframe<localstartframe 
+        if localstopframe<localstartframe
             %rare situation where epoch spans a movie boundary
             %localframenum(absframes)
             absframes=absstartframe:absstopframe;

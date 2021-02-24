@@ -76,7 +76,9 @@ system(cmdstr);
 PlotPosteriorProbs(outputdir)
 
 PruneTPM(outputdir)
+PlotEPM(outputdir)
 GenerateStateEpochClips(outputdir)
 TileVideoClips(outputdir)
+LabelMovieStates(outputdir)
 
 
