@@ -56,15 +56,17 @@ for i=2:length(datadirs);
     
     
     [vids,units,chans] = AssimilateSignals(cricketdropframe, catchframe);
-            cmap=jet(length(units));
- for u=1:length(units)
-     start=units(1).start;
-     stop=units(1).stop;
-     spiketimes=units(u).spiketimes;
-      %spiketimes are empty/broken for now, so let's pretend we get some spiketimes   
-     spiketimes=start+(stop-start)*rand(100,1);
-     
-     plot(spiketimes, ones(size(spiketimes)), '.', 'markersize', 20, 'color', cmap(u,:))
+    cmap=jet(length(units));
+    offset=0;
+    for u=1:length(units)
+        offset=offset+1;
+        start=units(1).start;
+        stop=units(1).stop;
+        spiketimes=units(u).spiketimes;
+        %spiketimes are empty/broken for now, so let's pretend we get some spiketimes
+        spiketimes=start+(stop-start)*rand(100,1);
+        
+     plot(spiketimes, ones(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
  end
  keyboard
     
