@@ -58,7 +58,7 @@ cd(outputdir)
 %     fprintf('\ncancelled')
 %     return
 % end
-DirList=    'processedvids_noephys.txt';
+DirList=    'processedvids_ephys.txt';
 dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Molly/';
 
 

@@ -32,10 +32,7 @@ for i=1:length(datadirs);
     
   
     datadir=datadirs{i};
-    if ismac
-        datadir= strrep(datadir, '\', '/');
-        datadir= strrep(datadir, 'D:', '/Volumes/wehrrig4.uoregon.edu');
-    end
+    if ismac datadir=macifypath(datadir);end
     
     cd(datadir)
     d=dir('*_labeled.mp4');

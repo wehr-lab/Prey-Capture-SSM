@@ -33,10 +33,7 @@ while 1 %processes until end of file is reached, then breaks
         datadirs{i}=datadir;
         fprintf('\n%s', datadir)
         % adjust filenames to work on a mac
-        if ismac
-            datadir= strrep(datadir, '\', '/');
-            datadir= strrep(datadir, 'D:', '/Volumes/wehrrig4.uoregon.edu');
-        end
+        if ismac datadir=macifypath(datadir);end
         cd(datadir)
         d=dir('geometry-*.mat');
         if isempty (d)
