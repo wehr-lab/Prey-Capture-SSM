@@ -14,10 +14,15 @@ load('pruned_tpm.mat')
 load('training_data.mat')
 
 
-
-
 cumstartframe=1;
-for i=2:length(datadirs);
+for i=1:length(datadirs);
+    numframes=groupdata(i).numframes;
+    cumstartframes(i)=cumstartframe;
+    cumstopframes(i)=cumstartframe+numframes-1;
+    cumstartframe=cumstartframe+numframes;
+end
+
+for i=1:length(datadirs);
     % localframenum comes from ConvertGeometryToObservations and
     % already accounts for trimming from cricket drop frame to catch
     % frame
@@ -44,106 +49,86 @@ for i=2:length(datadirs);
     plot(t, nRelativeAzimuth)
     plot(t, nmouse_thigmo_distance)
     numframes=length(t);
-    localZ=Z(cumstartframe:cumstartframe+numframes-1);
-    plot( t, localZ/num_states)
+    localZ=Z(cumstartframes(i):cumstopframes(i));
+    plot( t, 1+.25*localZ/num_states)
     legend('range', 'speed', 'azimuth', 'thigmo', 'Z')
     
-    
+    %get spiketimes and alignment
     datadir=datadirs{i};
     if ismac datadir=macifypath(datadir);end
-    
     cd(datadir)
-    
-    
     [vids,units,chans] = AssimilateSignals(cricketdropframe, catchframe);
-    cmap=jet(length(units));
+    
+    %plot rasters
+    numunits=length(units);
+    cmap=jet(numunits);
     offset=0;
-    for u=1:length(units)
+    for u=1:numunits
         offset=offset+1;
         start=units(1).start;
         stop=units(1).stop;
         spiketimes=units(u).spiketimes;
-        %spiketimes are empty/broken for now, so let's pretend we get some spiketimes
-        spiketimes=start+(stop-start)*rand(100,1);
-        
-     plot(spiketimes, ones(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
- end
- keyboard
-    
-    
-    
-    %at end, advance frame marker
-    cumstartframe=cumstartframe+numframes;
-    
-    
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-for k=1:pruned_num_states
-    fprintf('\nstate %d/%d ', k, pruned_num_states );
-    nbytes = fprintf(' epoch 0/%d', pruned_epochs(k).num_epochs );
-    for e=1:min(36, pruned_epochs(k).num_epochs)
-        fprintf(repmat('\b',1,nbytes));
-        nbytes = fprintf(' epoch %d/%d', e,pruned_epochs(k).num_epochs );
-        
-        absstartframe=pruned_epochs(k).starts(e); %these are relative to X
-        absstopframe=pruned_epochs(k).stops(e);
-        moviedir=datadirs_by_frame{absstartframe};
-        
-        % localframenum comes from ConvertGeometryToObservations and
-        % already accounts for trimming from cricket drop frame to catch
-        % frame
-        localstartframe=localframenum(absstartframe);
-        localstopframe=localframenum(absstopframe);
-        if localstopframe<localstartframe
-            %rare situation where epoch spans a movie boundary
-            %localframenum(absframes)
-            absframes=absstartframe:absstopframe;
-            movieboundary=find(localframenum(absframes)==1);
-            if movieboundary>round(length(absframes)/2)
-                %keep the part of epoch that's in the first movie
-                localstopframe=movieboundary-1;
-            elseif movieboundary<=round(length(absframes)/2)
-                %keep the part of epoch that's in the second movie
-                localstartframe=1;
-                moviedir=datadirs_by_frame{absstartframe};
-            else error('wtf')
-            end
-        end
-        cd(moviedir)
-        d=dir('*labeled.mp4');
-        movie_filename=d(1).name;
-        v = VideoReader(fullfile(moviedir, movie_filename));
-        vidFrames = read(v, [localstartframe, localstopframe]) ;
-        vidFrames=imresize(vidFrames, .5);
-        str=sprintf('k%d e%d', k,e);
-        for f=1:size(vidFrames, 4)
-            vidFrames(:,:,:,f) = insertText(vidFrames(:,:,:,f),[5,5],str,...
-                'FontSize',60,'Font', 'Arial', 'BoxColor', 'g',  ...
-                'BoxOpacity',0.4,'TextColor','white');
-        end
-        out_movie_filename=sprintf('ssm_state_epoch_clip-%d-%d', k, e);
-        out_movie_fullfilename=fullfile(outputdir, out_movie_filename);
-        vout = VideoWriter(out_movie_fullfilename, 'MPEG-4');
-        open(vout)
-        writeVideo(vout,vidFrames)
-        close(vout)
+        spiketimes=spiketimes-start; %align to cricketdrop
+        plot(spiketimes, zeros(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
     end
+    
+    %plot states/epochs
+    figure('pos', [430   923   560   420])
+    hold on
+    colors=jet(pruned_num_states);
+    ylim=[0 1];
+    yl=ylim;
+    for k=1:pruned_num_states
+        %find epoch starts within this trial
+        epoch_start_idx=find(pruned_epochs(k).starts>cumstartframes(i) & ...
+            pruned_epochs(k).starts<cumstopframes(i));
+        epoch_starts=pruned_epochs(k).starts(epoch_start_idx);
+        %find epoch stops within this trial
+        epoch_stop_idx=find(pruned_epochs(k).stops>cumstartframes(i) & ...
+            pruned_epochs(k).stops<cumstopframes(i));
+        epoch_stops=pruned_epochs(k).stops(epoch_stop_idx);
+        
+        
+        for e=1:length(epoch_starts)
+            c=colors(k,:);
+            Xidx=[epoch_starts(e), epoch_starts(e), epoch_stops(e), epoch_stops(e)];
+            Xidx=Xidx-cumstartframes(i); % convert to local frames
+            X=t(Xidx); %convert to local time in seconds (to match spiketimes)
+            Y=[0 numunits numunits 0];
+            jb=fill(X, Y, c, 'facealpha', .1, 'edgecolor', 'none');
+            % jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
+        end
+        %plot rasters
+        cmap=jet(numunits);
+        offset=0;
+        for u=1:numunits
+            offset=offset+1;
+            start=units(1).start;
+            stop=units(1).stop;
+            spiketimes=units(u).spiketimes;
+            spiketimes=spiketimes-start; %align to cricketdrop
+            plot(spiketimes, zeros(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
+        end
+    end
+    
+    
+    
+%     keyboard
+    
+    
+    
 end
 
 
-beep
+
+
+
+
+
+
+
+
+
 
 
 
