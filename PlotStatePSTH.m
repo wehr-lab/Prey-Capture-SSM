@@ -17,7 +17,7 @@ load('training_data.mat')
 
 
 cumstartframe=1;
-for i=1:length(datadirs);
+for i=2:length(datadirs);
     % localframenum comes from ConvertGeometryToObservations and
     % already accounts for trimming from cricket drop frame to catch
     % frame
@@ -56,8 +56,17 @@ for i=1:length(datadirs);
     
     
     [vids,units,chans] = AssimilateSignals(cricketdropframe, catchframe);
-    
-    keyboard
+            cmap=jet(length(units));
+ for u=1:length(units)
+     start=units(1).start;
+     stop=units(1).stop;
+     spiketimes=units(u).spiketimes;
+      %spiketimes are empty/broken for now, so let's pretend we get some spiketimes   
+     spiketimes=start+(stop-start)*rand(100,1);
+     
+     plot(spiketimes, ones(size(spiketimes)), '.', 'markersize', 20, 'color', cmap(u,:))
+ end
+ keyboard
     
     
     
