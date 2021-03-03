@@ -36,7 +36,7 @@ while 1 %processes until end of file is reached, then breaks
         if ismac datadir=macifypath(datadir);end
         cd(datadir)
         d=dir('geometry-*.mat');
-        if isempty (d)
+        if isempty (d) %set to 1 to force re-process geometry
             ConvertDLCtoGeometry(datadir)
             d=dir('geometry-*.mat');
         end
@@ -64,21 +64,7 @@ while 1 %processes until end of file is reached, then breaks
             datadirs_by_frame{k}=datadir;
         end
         
-        %         X(startidx:startidx-1+length(groupdata(i).cricketspeed(region(1:end-1))), 2)= groupdata(i).cricketspeed(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).range(region)), 3)= groupdata(i).range(region);
-        %         X(startidx:startidx-1+length(groupdata(i).azimuth(region)), 4)= groupdata(i).azimuth(region);
-        %         X(startidx:startidx-1+length(groupdata(i).mousevelocity0(region(1:end-1))), 5)= groupdata(i).mousevelocity0(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).mousevelocity90(region(1:end-1))), 6)= groupdata(i).mousevelocity90(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).cricketvelocity0(region(1:end-1))), 7)= groupdata(i).cricketvelocity0(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).cricketvelocity90(region(1:end-1))), 8)= groupdata(i).cricketvelocity90(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).drange(region(1:end-1))), 9)= groupdata(i).drange(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).dazimuth(region(1:end-1))), 10)= groupdata(i).dazimuth(region(1:end-1));
-        %         X(startidx:startidx-1+length(groupdata(i).mouseacceleration(region(1:end-2))), 11)= groupdata(i).mouseacceleration(region(1:end-2));
-        %         X(startidx:startidx-1+length(groupdata(i).cricketacceleration(region(1:end-2))), 12)= groupdata(i).cricketacceleration(region(1:end-2));
-        %         X(startidx:startidx-1+length(groupdata(i).cricket_thigmo_distance(region)), 13)= groupdata(i).cricket_thigmo_distance(region);
-        %         X(startidx:startidx-1+length(groupdata(i).mouse_thigmo_distance(region)), 14)= groupdata(i).mouse_thigmo_distance(region);
-        %         drug(startidx:startidx-1+length(groupdata(i).range(region)))=1;
-    end
+           end
 end
 
 

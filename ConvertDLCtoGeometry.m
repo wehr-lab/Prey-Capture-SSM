@@ -3,7 +3,7 @@ function ConvertDLCtoGeometry(varargin)
 %     datapath - folder with DLC tracks (defaults to current directory)
 %     'plot' - if you want to display some plots (defaults to no plotting)
 %
-%this function loads DLC (x,y,t) tracking data from an indivual session, and computes
+%this function loads DLC (x,y,t) tracking data from an individual session, and computes
 %geometric variables like speed, range, azimuth, and saves to local file.
 %optionally displays some plots if you pass 'plot' as a second argument
 
@@ -24,7 +24,10 @@ end
 cd(datapath)
 d=dir('Behavior_mouse-*.mat');
 if length(d)==0
-    error('no Behavior_mouse file in this directory')
+    warning('no Behavior_mouse file in this directory')
+    ProcessCams
+    d=dir('Behavior_mouse-*.mat');
+    warning('no Behavior_mouse file in this directory')
 elseif length(d)>1
     error('more than one behavior datafile');
 end
@@ -32,6 +35,7 @@ behavior_datafile=d(1).name;
 load(behavior_datafile)
 fprintf('\nloaded %s', behavior_datafile)
 outfilename=strrep(behavior_datafile, 'Behavior_mouse', 'geometry');
+% names of DLC points
 % cricketback
 % cricketfront
 % headbase
@@ -75,27 +79,29 @@ end
 
 % find cricket drop and clean up tracks using probability
 % drop is where probability crosses .5 and stays up for >.5s
-%(arbitrary first guess)
+%(arbitrary operational definition)
 pthresh=.5; % probability threshold
+durthresh=100; %cricketprob needs to stay high for this many frames to count as a drop
 cricketprob=mean([cricketfront(:,3), cricketback(:,3)], 2);
 goodframes=find(cricketprob>=pthresh); %frames with prob above thresh
 dfgoodframes=diff(goodframes);
 thresh=20; %ignore probability flickers shorter than this
 i=1;
 %check how long the cricket was in view, error out (for now) if too short to study
-if length(find(cricketprob>pthresh))<100
+if length(find(cricketprob>pthresh))<durthresh
     fprintf('\n\nproblem with %s\n', datapath)
     error(sprintf('cricket only in view for %.0f ms, exclude this session', 1000*length(find(cricketprob>pthresh))/framerate))
 end
 
-while any(dfgoodframes(i:i+round(.5*framerate))>=thresh) %scan until we don't see diff jumps
+while any(dfgoodframes(i:i+durthresh)>=thresh) %scan until we don't see diff jumps
     i=i+1;
     
-    if (i+round(.5*framerate))>length(dfgoodframes)
+    if (i+durthresh)>length(dfgoodframes)
         fprintf('\n\nproblem with %s\n', datapath)
         error('no sustained view of cricket, exclude this session')
     end
 end
+fprintf('\n%d total frames in video)', length(cricketprob))
 cricketdropframe=goodframes(i);
 catchframe=goodframes(end); %last known sighting of cricket = catch frame
 fprintf('\ncricket drop frame %d (%.1fs)', cricketdropframe, cricketdropframe/framerate)
@@ -105,18 +111,16 @@ fprintf('\ncricket catch frame %d (%.1fs)', catchframe, catchframe/framerate)
 % headbaset=headbase(cricketdropframe:catchframe,:);
 headbasex=headbase(cricketdropframe:catchframe,1);
 headbasey=headbase(cricketdropframe:catchframe,2);
-% noset=nose(cricketdropframe:catchframe,:);
+headbaseprob=headbase(cricketdropframe:catchframe,3);
 nosex=nose(cricketdropframe:catchframe,1);
 nosey=nose(cricketdropframe:catchframe,2);
-% righteart=rightear(cricketdropframe:catchframe,:);
 rightearx=rightear(cricketdropframe:catchframe,1);
 righteary=rightear(cricketdropframe:catchframe,2);
-% lefteart=leftear(cricketdropframe:catchframe,:);
 leftearx=leftear(cricketdropframe:catchframe,1);
 lefteary=leftear(cricketdropframe:catchframe,2);
-% tailbaset=tailbase(cricketdropframe:catchframe,:);
 tailbasex=tailbase(cricketdropframe:catchframe,1);
 tailbasey=tailbase(cricketdropframe:catchframe,2);
+tailbaseprob=tailbase(cricketdropframe:catchframe,3);
 cricketfrontprob=cricketfront(cricketdropframe:catchframe,3);
 cricketfrontx=cricketfront(cricketdropframe:catchframe,1);
 cricketfronty=cricketfront(cricketdropframe:catchframe,2);
@@ -124,6 +128,7 @@ cricketbackprob=cricketback(cricketdropframe:catchframe,3);
 cricketbackx=cricketback(cricketdropframe:catchframe,1);
 cricketbacky=cricketback(cricketdropframe:catchframe,2);
 numframes=length(nosex);
+fprintf('\n%d frames (cricket drop to catch))', numframes)
 
 fprintf('\ncleaning cricket tracks...')
 % try using resample approach for cleaning
@@ -135,8 +140,53 @@ errframes=find(cricketprob<pthresh); %find missing frames
 clean_cricketfrontx=clean_cricketfrontx(1:length(nosex)); %trim to same length (might be off by 1)
 clean_cricketfronty=clean_cricketfronty(1:length(nosex)); %trim to same length (might be off by 1)
 
+fprintf('\ncleaning mouse tracks...')
+goodframes=find(headbaseprob>=pthresh); %frames with prob above thresh
+errframes=find(headbaseprob<pthresh); %find missing frames
+[clean_headbasex, ty]=resample(headbasex(goodframes), goodframes, 1, 'pchip');
+[clean_headbasey, ty]=resample(headbasey(goodframes), goodframes, 1, 'pchip');
+if length(nosex)>length(clean_headbasex)
+    tmpx=clean_headbasex;
+    tmpy=clean_headbasey;
+    clean_headbasex=zeros(size(nosex));
+    clean_headbasey=zeros(size(nosex));
+    clean_headbasex(1:length(tmpx))=tmpx; %trim to same length (might be off by 1)
+    clean_headbasey(1:length(tmpx))=tmpy; %trim to same length (might be off by 1)
+else
+    clean_headbasex=clean_headbasex(1:length(nosex)); %trim to same length (might be off by 1)
+    clean_headbasey=clean_headbasey(1:length(nosex)); %trim to same length (might be off by 1)
+end
+
+goodframes=find(tailbaseprob>=pthresh); %frames with prob above thresh
+errframes=find(tailbaseprob<pthresh); %find missing frames
+[clean_tailbasex, ty]=resample(tailbasex(goodframes), goodframes, 1, 'pchip');
+[clean_tailbasey, ty]=resample(tailbasey(goodframes), goodframes, 1, 'pchip');
+if length(nosex)>length(clean_tailbasex)
+    tmpx=clean_tailbasex;
+    tmpy=clean_tailbasey;
+    clean_tailbasex=zeros(size(nosex));
+    clean_tailbasey=zeros(size(nosex));
+    clean_tailbasex(1:length(tmpx))=tmpx; %trim to same length (might be off by 1)
+    clean_tailbasey(1:length(tmpx))=tmpy; %trim to same length (might be off by 1)
+else
+    clean_tailbasex=clean_tailbasex(1:length(nosex)); %trim to same length (might be off by 1)
+    clean_tailbasey=clean_tailbasey(1:length(nosex)); %trim to same length (might be off by 1)
+end
+
+%smooth
+fprintf('\nfiltering...')
+[b,a]=butter(3, .25);
+snosex=filtfilt(b,a,nosex);
+snosey=filtfilt(b,a,nosey);
+sheadbasex=filtfilt(b,a,clean_headbasex);
+sheadbasey=filtfilt(b,a,clean_headbasey);
+stailbasex=filtfilt(b,a,clean_tailbasex);
+stailbasey=filtfilt(b,a,clean_tailbasey);
+scricketx=filtfilt(b,a,clean_cricketfrontx);
+scrickety=filtfilt(b,a,clean_cricketfronty);
+
 if plotit
-    %check the results of cleaning
+    %check the results of cleaning and smoothing
     
     figure, hold on
     t=1:length(cricketfrontx);
@@ -144,195 +194,45 @@ if plotit
     plot(errframes, cricketfrontx(errframes), 'ro')
     plot(goodframes, cricketfrontx(goodframes), 'go')
     plot(t, cricketprob*100)
-    plot(t, clean_cricketfrontx,t, clean_cricketfronty, 'k', 'linewi', 2)
-    
+    plot(t, scricketx,t, scrickety, 'k', 'linewi', 2)
+    legend('cricket', 'cricket errframes', 'cricket good frames',...
+        'cricketprob', 'cleaned & smoothed cricket')
+
+    figure, hold on
+    plot(t, headbasex, t, headbasey)
+    plot(errframes, headbasex(errframes), 'ro')
+    plot(goodframes, headbasex(goodframes), 'go')
+    plot(t, headbaseprob*100)
+    plot(t, sheadbasex,t, sheadbasey, 'k', 'linewi', 2)
+        legend('headbase', 'head errframes', 'head good frames',...
+        'mouseprob', 'cleaned & smoothed head')
+
     figure
     plot(headbasex, headbasey)
     hold on
-    plot(nosex, nosey)
-    plot(clean_cricketfrontx, clean_cricketfronty)
-    title('cleaned data')
-    legend('mouse headbase', 'mouse nose', 'cricket front')
+    plot(sheadbasex, sheadbasey)
+    plot(scricketx, scrickety)
+    title('cleaned and smoothed data')
+    legend('raw headbase', 'cleaned & smoothed headbase', 'cleaned & smoothed cricket')
     set(gca, 'ydir', 'reverse')
-end
 
-%need to clean mouse tracks using same method
-
-
-
-% %clean tracks using mean of nearest pre/post good frames- this is really slow and needs to be vectorized for speed
-% fprintf('\ncleaning cricket tracks...')
-% errframes=find(cricketprob<.5); %find missing frames
-% wb=waitbar(0);
-% for i=errframes'
-%     waitbar(i/length(errframes),wb)
-%     if i> cricketdropframe
-%         %find nearest previous good frame
-%         j=i;
-%         while ~ismember(j, goodframes)
-%             j=j-1;
-%             %             if j<cricketdropframe
-%             %                 %this should never happen
-%             %                 j=i
-%             %                 break
-%             %             end
-%         end
-%         pre_goodframe=j;
-%         %find nearest next good frame
-%         j=i;
-%         while ~ismember(j, goodframes)
-%             j=j+1;
-%             if j>numframes
-%                 j=pre_goodframe;
-%                 break
-%             end
-%         end
-%         post_goodframe=j;
-%         clean_cricketfront(i,1:2)=mean([clean_cricketfront(pre_goodframe,1:2); clean_cricketfront(post_goodframe,1:2)],1 );
-%         clean_cricketback(i,1:2)=mean([clean_cricketback(pre_goodframe,1:2); clean_cricketback(post_goodframe,1:2)], 1);
-%
-%     end
-% end
-% close(wb)
-
-% % clean up cricket tracks, by median filtering
-% dfc1=diff(clean_cricketfront);
-% thresh=10; %plausible cricket jump threshold, pixels
-% errframes1=find(abs(dfc1)>thresh);
-% for ef=errframes1'
-%     if ef>3 & ef<length(clean_cricketfront)-3
-%         clean_cricketfront(ef,:)=median(clean_cricketfront(ef-3:ef+3,:));
-%         clean_cricketback(ef,:)=median(clean_cricketback(ef-3:ef+3,:));
-%     end
-%  end
-%
-% if plotit
-%     %check the results of cleaning
-%     figure, hold on
-%     plot(t, cricketfront(:,1))
-%     plot(t, cricketfront(:,2))
-%     plot(t, clean_cricketfront(:,1), 'linewidth', 2)
-%     plot(t, clean_cricketfront(:,2), 'linewidth', 2)
-%     plot(t, cricketback(:,1))
-%     plot(t, cricketback(:,2))
-%     plot(t, clean_cricketback(:,1), 'linewidth', 2)
-%     plot(t, clean_cricketback(:,2), 'linewidth', 2)
-%     plot(t, cricketprob*100)
-%     plot(t(cricketdropframe), 1300, 'v')
-%     legend('original front x','original front y', ...
-%         'cleaned front x',  'cleaned front y', ...
-%         'original back x','original back y', ...
-%         'cleaned back x',  'cleaned back y', 'cricket prob')
-%
-%     figure
-%     hold on
-%     roi=1:numframes;
-%     %roi=1.4e4:1.5e4;
-%     plot(headbase(roi,1), headbase(roi,2))
-%     plot(nose(roi,1), nose(roi,2))
-%     plot(clean_cricketfront(roi,1), clean_cricketfront(roi,2))
-%     title('cleaned data')
-%     legend('mouse headbase', 'mouse nose', 'cricket front')
-%     set(gca, 'ydir', 'reverse')
-% end
-
-
-%smooth
-fprintf('\nfiltering...')
-[b,a]=butter(3, .25);
-snosex=filtfilt(b,a,nosex);
-snosey=filtfilt(b,a,nosey);
-sheadbasex=filtfilt(b,a,headbasex);
-sheadbasey=filtfilt(b,a,headbasey);
-scricketx=filtfilt(b,a,clean_cricketfrontx);
-scrickety=filtfilt(b,a,clean_cricketfronty);
-
-if plotit
     figure
     hold on
-    plot(sheadbasex, sheadbasey, snosex, snosey, scricketx, scrickety)
+    plot(sheadbasex, sheadbasey, stailbasex, stailbasey, scricketx, scrickety)
     text(sheadbasex(1), sheadbasey(1), 'start')
     text(scricketx(1), scrickety(1), 'start')
     title('mouse & cricket positions, smoothed')
     set(gca, 'ydir', 'reverse')
+    legend('headbase', 'tailbase', 'cricket')
 end
 
 
-
-% animate the mouse and cricket
-% if(1)
-%     h=plot(smouseCOMx(1), smouseCOMy(1), 'bo', smouseNosex(1), smouseNosey(1), 'ro');
-%     for f=1:length(smouseCOMx)
-%         hnew=plot(smouseCOMx(f), smouseCOMy(f), 'bo', ...
-%             smouseNosex(f), smouseNosey(f), 'ro', ...
-%             scricketx(f), scrickety(f), 'ko');
-%         set(h, 'visible', 'off');
-%         h=hnew;
-%         pause(.01)
-%     end
-% end
 
 %atan2d does the full circle (-180 to 180)
 %atand does the half circle (-90 to 90)
 
 
 
-% %mouse bearing: mouse body-to-nose angle, in absolute coordinates
-% deltax=smouseNosex-smouseCOMx;
-% deltay=smouseNosey-smouseCOMy;
-% mouse_bearing=atan2d(deltay, deltax);
-%
-% %mouseCOM-to-cricket angle, in absolute coordinates
-% deltax_ccom=scricketx-smouseCOMx;
-% deltay_ccom=scrickety-smouseCOMy;
-% cricket_angle_com=atan2d(deltay_ccom, deltax_ccom);
-%
-% %mouseNose-to-cricket angle, in absolute coordinates
-% %(should be nearly identical to mouseCOM-to-cricket angle)
-% deltax_cnose=scricketx-smouseNosex;
-% deltay_cnose=scrickety-smouseNosey;
-% cricket_angle_nose=atan2d(deltay_cnose, deltax_cnose);
-%
-% %azimuth: relative angle between mouse bearing and mouseCOM-to-cricket angle
-% azimuth2=mouse_bearing-cricket_angle_com;
-% azimuth1=mouse_bearing-cricket_angle_nose;
-%
-% figure
-% hold on
-% plot(cricket_angle_com)
-% plot(cricket_angle_nose)
-% plot(mouse_bearing)
-% title('absolute angles')
-% legend('mouse COM to cricket', 'mouse nose to cricket', 'mouse bearing')
-%
-% mouse_bearing_unwrapped = 180/pi * unwrap(mouse_bearing * pi/180);
-% cricket_angle_com_unwrapped = 180/pi * unwrap(cricket_angle_com * pi/180);
-% cricket_angle_nose_unwrapped = 180/pi * unwrap(cricket_angle_nose * pi/180);
-%
-% azimuth4=mouse_bearing_unwrapped-cricket_angle_com_unwrapped;
-% azimuth3=mouse_bearing_unwrapped-cricket_angle_nose_unwrapped;
-%
-% figure(ftracks)
-% subplot(312)
-% hold on
-% plot(cricket_angle_com_unwrapped)
-% plot(cricket_angle_nose_unwrapped)
-% plot(mouse_bearing_unwrapped, 'k')
-% title('unwrapped absolute angles')
-% legend('mouse COM to cricket', 'mouse nose to cricket', 'mouse bearing')
-
-% animate the mouse and cricket
-% if(1)
-%     h=plot(smouseCOMx(1), smouseCOMy(1), 'bo', smouseNosex(1), smouseNosey(1), 'ro');
-%     for f=1:length(smouseCOMx)
-%         hnew=plot(smouseCOMx(f), smouseCOMy(f), 'bo', ...
-%             smouseNosex(f), smouseNosey(f), 'ro', ...
-%             scricketx(f), scrickety(f), 'ko');
-%         set(h, 'visible', 'off');
-%         h=hnew;
-%         pause(.01)
-%     end
-% end
 
 fprintf('\ncomputing geometry...')
 %calculating Relative Azimuth instead of using absolute angles
@@ -341,11 +241,15 @@ fprintf('\ncomputing geometry...')
 % b=COM-to-cricket
 % c=nose-to-cricket
 % then azimuth=arccos((a2 + b2 - c2)/(2ab))
-a=sqrt((sheadbasex-snosex).^2 + (sheadbasey-snosey).^2);
-b=sqrt((sheadbasex-scricketx).^2 + (sheadbasey-scrickety).^2);
-c=sqrt((snosex-scricketx).^2 + (snosey-scrickety).^2);
+%
+%nose is unreliably tracked, so switching to tailbase-headbase
+a=sqrt((stailbasex-sheadbasex).^2 + (stailbasey-sheadbasey).^2);
+b=sqrt((stailbasex-scricketx).^2 + (stailbasey-scrickety).^2);
+c=sqrt((sheadbasex-scricketx).^2 + (sheadbasey-scrickety).^2);
 RelativeAzimuth=acosd((a.^2+b.^2-c.^2)./(2.*a.*b));
 
+%an alternative is to use the ears, which should be orthogonal to mouse
+%bearing
 
 if plotit
     
@@ -446,7 +350,7 @@ if plotit
     ylabel('speed, px/frame')
     grid on
     line(xlim, [0 0], 'color', 'k')
-    th=title(datapath);
+    th=title(datapath, 'interpreter', 'none');
     set(th,'fontsize', 8)
     try
         %     print -dpsc2 'analysis_plots.ps' -append
@@ -491,7 +395,7 @@ if plotit
     % print -dpsc2 'analysis_plots.ps' -append
 end
 
-%fit ellipse to arena to find distance-to-wall
+% fit ellipse to arena to find distance-to-wall
 d=dir('*_labeled.mp4');
 movie_filename2=d(1).name;
 v1 = VideoReader(movie_filename2);
