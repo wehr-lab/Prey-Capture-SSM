@@ -5,8 +5,8 @@
 % saves results in pruned_tpm.mat
 
 % parameters we may tweak are here
-state_duration_cutoff=500; %in frames, 100 worked well for 30 Hz framerate (also depends on total frames)
-epoch_duration_cutoff=60;
+state_duration_cutoff=100; %in frames, 100 worked well for 30 Hz framerate (also depends on total frames)
+epoch_duration_cutoff=10;
 
 %load the output of the python ssm code 
 cd(datadir)
@@ -72,19 +72,24 @@ fprintf('\nexcluding %d of %d epochs (%d %%)',length(find(durs<=epoch_duration_c
 kk=0;
 for k=1:num_states
     if ~ismember(k, excluded_states)
-        kk=kk+1;
         starts=epochs(k).starts;
         stops=epochs(k).stops;
         numframes=epochs(k).numframes;
         surviving_epochs=find(numframes>epoch_duration_cutoff);
-        pruned_num_epochs(kk)=length(surviving_epochs);
-        pruned_epochs(kk).starts=starts(surviving_epochs);
-        pruned_epochs(kk).stops=stops(surviving_epochs);
-        pruned_epochs(kk).num_epochs=length(surviving_epochs);
-        pruned_epochs(kk).numframes=numframes(surviving_epochs);
-        pruned_epochs(kk).total_numframes=sum(numframes(surviving_epochs));
+        if length(surviving_epochs)>0
+            kk=kk+1;
+            pruned_num_epochs(kk)=length(surviving_epochs);
+            pruned_epochs(kk).starts=starts(surviving_epochs);
+            pruned_epochs(kk).stops=stops(surviving_epochs);
+            pruned_epochs(kk).num_epochs=length(surviving_epochs);
+            pruned_epochs(kk).numframes=numframes(surviving_epochs);
+            pruned_epochs(kk).total_numframes=sum(numframes(surviving_epochs));
+        end
     end
 end
+pruned_num_states=kk;
+fprintf('\nafter epoch duration pruning %d states remain', pruned_num_states)
+
 
 % post-pruning inspection
 durs=[];

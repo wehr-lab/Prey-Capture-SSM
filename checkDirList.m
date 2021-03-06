@@ -20,7 +20,7 @@ while 1 %processes until end of file is reached, then breaks
         i=i+1;
         
         datadirs{i}=datadir;
-        fprintf('\n%s', datadir)
+        fprintf('\n%d %s', i, datadir)
         % adjust filenames to work on a mac
         if ismac datadir=macifypath(datadir);end
         
@@ -42,7 +42,7 @@ while 1 %processes until end of file is reached, then breaks
             fprintf('\n\t found file %s ', d(1).name)
         end
         d=dir('Assimilation.mat');
-        if ~isempty (d)
+        if 0%~isempty (d)
             fprintf('\n\t found assimilation file %s ', d.name)
         else
             myWorkflow

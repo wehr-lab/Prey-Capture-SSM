@@ -134,6 +134,10 @@ cd(moviedir)
 d=dir('*labeled.mp4');
 movie_filename=d(1).name;
         v = VideoReader(fullfile(moviedir, movie_filename));
+        if localstopframe>v.NumFrames
+            warning(sprintf('localstopframe is off from v.NumFrames by %d frames', localstopframe-v.NumFrames))
+            localstopframe=v.NumFrames; %
+        end
         vidFrames = read(v, [localstartframe, localstopframe]) ;
         vidFrames=imresize(vidFrames, .5);
         str=sprintf('k%d e%d', k,e);
