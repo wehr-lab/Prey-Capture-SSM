@@ -8,15 +8,12 @@ import os
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
-num_states = 5    # number of discrete states
-observation_class = 'autoregressive'
+num_states = 20    # number of discrete states
 obs_dim = 14       # dimensionality of observation
-transitions = 'sticky'
-kappa = 1E10
-AR_lags =  2
-hmm = ssm.HMM(num_states, obs_dim,
-              observations=observation_class, observation_kwargs={'lags':AR_lags},
-              transitions=transitions, transition_kwargs={'kappa': kappa})
+#cov="gaussian"
+#cov="diagonal_gaussian"
+cov='autoregressive'
+hmm = ssm.HMM(num_states, obs_dim, observations=cov)
 
 #load data using loadmat
 mat=io.loadmat('training_data.mat') 
@@ -24,7 +21,7 @@ mat=io.loadmat('training_data.mat')
 X = mat['X']
 
 #fit hmm to data
-N_iters=20
+N_iters=200
 #N_iters=10
 hmm_lls = hmm.fit(X, method="em", num_iters=N_iters)
 Z = hmm.most_likely_states(X)
@@ -34,7 +31,7 @@ run_on = time.asctime( time.localtime(time.time()) )
 run_from = os.getcwd()
 
 #save output files using savemat
-mdict={'Z': Z, 'Ps': Ps, 'num_states': num_states, 'obs_dim': obs_dim, 'transitions': transitions, 'kappa': kappa, 'AR_lags': AR_lags, 'hmm_lls':hmm_lls, 'TM':TM, 'observation_class': observation_class, 'run_on':run_on, 'run_from':run_from}
+mdict={'Z': Z, 'Ps': Ps, 'num_states': num_states, 'obs_dim':obs_dim, 'hmm_lls':hmm_lls, 'TM':TM, 'cov':cov, 'run_on':run_on, 'run_from':run_from}
 io.savemat('ssm_posterior_probs.mat', mdict)
 
 

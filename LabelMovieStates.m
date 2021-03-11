@@ -22,7 +22,7 @@ cmap=round(255*cmap);
 
 
 
-for i=1:length(datadirs);
+for i=1:20%length(datadirs);
     % localframenum comes from ConvertGeometryToObservations and
     % already accounts for trimming from cricket drop frame to catch
     % frame
@@ -59,14 +59,14 @@ for i=1:length(datadirs);
         
         % add state label
         if survival_mask(cumframeidx) %surviving epoch
-            boxcolor=cmap(1+Z(cumframeidx),:);
+            boxcolor=cmap(1+Zundec(cumframeidx),:);
             textcolor='white';
         else %this epoch was pruned away
             boxcolor='black';
             textcolor=[50 50 50];
         end
         
-        str=sprintf('%d', Z(cumframeidx));
+        str=sprintf('%d', Zundec(cumframeidx));
         vidFrame = insertText(vidFrame,[x1,y1],str,...
             'FontSize',60,'Font', 'Arial', 'BoxColor', boxcolor,  ...
             'BoxOpacity',0.4,'TextColor',textcolor);
@@ -75,7 +75,7 @@ for i=1:length(datadirs);
         %the counters are: trialnum localframenum/numframes
         %cumframenum/totalframes
         vidFrame = insertText(vidFrame,[10,900],...
-            sprintf('trial%d %d/%d %d/%d',i, f,numframes, cumframeidx, length(Z)),...
+            sprintf('trial%d %d/%d %d/%d',i, f,numframes, cumframeidx, length(Zundec)),...
             'FontSize',48,'Font', 'Arial', 'BoxColor', 'g',  ...
             'BoxOpacity',0,'TextColor','white');
         vidFrame = insertText(vidFrame,[10,1025],...

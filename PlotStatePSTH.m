@@ -13,7 +13,7 @@ function PlotStatePSTH(outputdir)
 
 if nargin==0
     close all
-    outputdir='/Volumes/Lennon/Documents/Analysis/PreyCapture data/state_epoch_clips-02-Mar-2021'
+    outputdir='/Volumes/Lennon/Documents/Analysis/PreyCapture data/state_epoch_clips-10-Mar-2021'
 end
 
 cd (outputdir)
@@ -32,6 +32,7 @@ for i=1:length(datadirs);
 end
 
 for i=1:length(datadirs);
+    fprintf('\n_____________________________________________________\n')
     fprintf('\ndir %d/%d', i, length(datadirs))
     if ismember(i, [61 62 63 64 65 66  ]) %messed up data
         %keyboard
@@ -62,18 +63,22 @@ for i=1:length(datadirs);
         nrange=range/max(abs(range));
         speed=groupdata(i).speed;
         nspeed=speed/max(abs(speed));
+        cspeed=groupdata(i).cspeed;
+        ncspeed=cspeed/max(abs(cspeed));
         RelativeAzimuth=groupdata(i).RelativeAzimuth;
         nRelativeAzimuth=RelativeAzimuth/max(abs(RelativeAzimuth));
         mouse_thigmo_distance=groupdata(i).mouse_thigmo_distance;
         nmouse_thigmo_distance=mouse_thigmo_distance/max(abs(mouse_thigmo_distance));
-        plot(t, nrange)
-        plot(t, nspeed)
-        plot(t, nRelativeAzimuth)
-        plot(t, nmouse_thigmo_distance)
+        plot(t, nrange, 'linew', 2)
+        plot(t, nspeed, 'linew', 2)
+        plot(t, ncspeed, 'linew', 2)
+        plot(t, nRelativeAzimuth, 'linew', 2)
+        plot(t, nmouse_thigmo_distance, 'linew', 2)
         numframes=length(t);
-        localZ=Z(cumstartframes(i):cumstopframes(i));
-        plot( t, 1+.25*localZ/num_states)
-        legend('range', 'speed', 'azimuth', 'thigmo', 'Z','AutoUpdate','off')
+        localZ=Zundec(cumstartframes(i):cumstopframes(i));
+        plot( t, 1+.25*double(localZ)/num_states)
+        legend('range', 'mouse speed', 'cricket speed', 'azimuth', 'thigmo', 'Z','AutoUpdate','off')
+        xlabel('time, s')
         
         %get spiketimes and alignment
         datadir=datadirs{i};
@@ -84,9 +89,9 @@ for i=1:length(datadirs);
         %plot rasters aligned to the geometry variables
         numunits=length(units);
         cmap=jet(numunits);
-        offset=0;
+        offset=1.25;
         for u=1:numunits
-            offset=offset+1;
+            offset=offset+.05;
             start=units(1).start;
             stop=units(1).stop;
             spiketimes=units(u).spiketimes;
@@ -94,12 +99,14 @@ for i=1:length(datadirs);
             plot(spiketimes, zeros(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
         end
         xlim([0 t(catchframe)])
-        
+        yl=ylim;
+        yl(2)=yl(2)+.05;
+        ylim(yl);
+
         %plot states/epochs as shaded boxes
-       % figure('pos', [430   923   560   420])
-       % hold on
+        % figure('pos', [430   923   560   420])
+        % hold on
         kcolors=jet(pruned_num_states);
-        yl=[0 1];
         for k=1:pruned_num_states
             %find epoch starts within this trial
             epoch_start_idx=find(pruned_epochs(k).starts>cumstartframes(i) & ...
@@ -111,24 +118,31 @@ for i=1:length(datadirs);
             epoch_stops=pruned_epochs(k).stops(epoch_stop_idx);
             
             for e=1:length(epoch_starts)
-                c=kcolors(k,:);
-                Xidx=[epoch_starts(e), epoch_starts(e), epoch_stops(e), epoch_stops(e)];
-                Xidx=Xidx-cumstartframes(i); % convert to local frames
-                X=t(Xidx); %convert to local time in seconds (to match spiketimes)
-                Y=[0 numunits numunits 0];
-                jb=fill(X, Y, c, 'facealpha', .5, 'edgecolor', 'none');
+                if e>length(epoch_stops)
+                    warning(sprintf('bailing: missing epoch stop for k=%d e=%d',k,e))
+                else
+                    c=kcolors(k,:);
+                    Xidx=[epoch_starts(e), epoch_starts(e), epoch_stops(e), epoch_stops(e)];
+                    Xidx=Xidx-cumstartframes(i); % convert to local frames
+                    X=t(Xidx); %convert to local time in seconds (to match spiketimes)
+                    Y=[0 yl(2) yl(2)  0];
+                    jb=fill(X, Y, c, 'facealpha', .25, 'edgecolor', 'none');
+                    
+                        text(X(1), Y(2), int2str(k), 'verticalalign', 'top')
+                    
+                end
             end
-%             %plot rasters aligned to the shaded state epochs
-%             cmap=jet(numunits);
-%             offset=0;
-%             for u=1:numunits
-%                 offset=offset+1;
-%                 start=units(1).start;
-%                 stop=units(1).stop;
-%                 spiketimes=units(u).spiketimes;
-%                 spiketimes=spiketimes-start; %align to cricketdrop
-%                 plot(spiketimes, zeros(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
-%             end
+            %             %plot rasters aligned to the shaded state epochs
+            %             cmap=jet(numunits);
+            %             offset=0;
+            %             for u=1:numunits
+            %                 offset=offset+1;
+            %                 start=units(1).start;
+            %                 stop=units(1).stop;
+            %                 spiketimes=units(u).spiketimes;
+            %                 spiketimes=spiketimes-start; %align to cricketdrop
+            %                 plot(spiketimes, zeros(size(spiketimes))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
+            %             end
         end
         
         %plot epoch-aligned rasters and firing rates
@@ -140,7 +154,7 @@ for i=1:length(datadirs);
         for k=1:pruned_num_states
             subplot1(k)
             hold on
-                    offset=0;
+            offset=0;
             %find epoch starts within this trial
             epoch_start_idx=find(pruned_epochs(k).starts>cumstartframes(i) & ...
                 pruned_epochs(k).starts<cumstopframes(i));
@@ -148,42 +162,50 @@ for i=1:length(datadirs);
             if length(epoch_starts)>0
                 ylabel(sprintf('state %d\n%d epochs', k,length(epoch_starts) ))
                 
-                    
-                    for u=1:numunits
-                        start=units(1).start;
-                        stop=units(1).stop;
-                        spiketimes=units(u).spiketimes;
-                        spiketimes=spiketimes-start; %align to cricketdrop
-                        allst=[];
-                        for e=1:length(epoch_starts)
-                            offset=offset+1;
-                            Xidx=epoch_starts(e);
-                            Xidx=Xidx-cumstartframes(i); % convert to local frames
-                            X=t(Xidx); %convert to local time in seconds (to match spiketimes)
-                            st=spiketimes(find(spiketimes>X-.100 & spiketimes<X+.500)); %extract spikes in a window around epoch start
-                            st=st-X; %align to epoch start time
-                            plot(st, zeros(size(st))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
-                            allst=[allst st];
-                        end
-                        if ~isempty(allst)
-                            
-                            %psth=conv(allst, gaussian(100, .25));
-                            [n,x]=hist(allst, [-.5:.01:.5]);
-                            plot(x, smooth(n)+offset-e, 'color', cmap(u,:))
-                            
-                        end
-                        line([0 0], ylim)
-                        if length(epoch_starts)>5
-                            %  keyboard
-                        end
+                clear fr nfr
+                for u=1:numunits
+                    start=units(1).start;
+                    stop=units(1).stop;
+                    spiketimes=units(u).spiketimes;
+                    spiketimes=spiketimes-start; %align to cricketdrop
+                    allst=[];
+                    for e=1:length(epoch_starts)
+                        offset=offset+1;
+                        Xidx=epoch_starts(e);
+                        Xidx=Xidx-cumstartframes(i); % convert to local frames
+                        X=t(Xidx); %convert to local time in seconds (to match spiketimes)
+                        st=spiketimes(find(spiketimes>X-.500 & spiketimes<X+.7500)); %extract spikes in a window around epoch start
+                        st=st-X; %align to epoch start time
+                        plot(st, zeros(size(st))+offset, '.', 'markersize', 20, 'color', cmap(u,:))
+                        allst=[allst st];
                     end
+                    if ~isempty(allst)
+                        
+                        %psth=conv(allst, gaussian(100, .25));
+                        [n,x]=hist(allst, [-.5:.01:.75]);
+                        fr(u,:)=smooth(n);
+                    else
+                        fr(u,:)=zeros(size(([-.5:.01:.75])));
+                    end
+                end
+                nfr=fr./max(fr(:)); %normalize
+                
+                for u=1:numunits
+                    scale=length(epoch_starts);
+                    offset=u*scale;
+                    plot(x, scale*nfr(u,:)+offset, 'color', cmap(u,:), 'linewidth', 2)
                     
+                end
+                line([0 0], ylim)
+                xlim([-.1 .5])
+                
             end
-            xlim([-.1 .5])
             
         end
         
     end
+    
+    
     
     cd(outputdir)
     try
@@ -196,6 +218,7 @@ for i=1:length(datadirs);
         close
     end
 end
+
 
 
 

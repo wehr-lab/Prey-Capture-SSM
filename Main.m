@@ -72,6 +72,21 @@ cmdstr=sprintf('%s %s', pypath, ssmfilename);
 system(activate_venv_cmd);
 system(cmdstr);
 
+% since we decimated ConvertGeometryToObservations, now we un-decimate the Z returned by the hmm
+load ssm_posterior_probs
+td=load('training_data');
+post_probs=Ps{1};
+j=0;
+for i=1:length(Z)
+    post_probs_undec(j+1:j+td.decimate_factor,:)=repmat(post_probs(i,:),td.decimate_factor,1);
+    Zundec(j+1:j+td.decimate_factor)=Z(i);
+    j=j+td.decimate_factor;
+end
+Zundec=Zundec(1:length(td.undecX));
+post_probs_undec=post_probs_undec(1:length(td.undecX),:);
+save ssm_posterior_probs Ps  TM Z Zundec post_probs post_probs_undec hmm_lls num_states obs_dim run_from run_on ...
+    transitions kappa AR_lags observation_class
+
 PlotPosteriorProbs(outputdir)
 
 PruneTPM(outputdir)
@@ -79,5 +94,5 @@ PlotEPM(outputdir)
 GenerateStateEpochClips(outputdir)
 TileVideoClips(outputdir)
 LabelMovieStates(outputdir)
-
+PlotStatePSTH(outputdir)
 

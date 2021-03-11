@@ -59,7 +59,7 @@ catch
     cd(outputdir)
     save NumFrames NumFrames
 end
-fprintf('\ndone\n')
+fprintf(' done\n')
 toc
 
 

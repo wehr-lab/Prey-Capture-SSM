@@ -311,10 +311,10 @@ if 0
 end
 
 %range (distance to target)
-deltax_cnose=scricketx-snosex;
-deltay_cnose=scrickety-snosey;
+deltax=scricketx-sheadbasex;
+deltay=scrickety-sheadbasey;
 
-range=sqrt(deltax_cnose.^2 + deltay_cnose.^2);
+range=sqrt(deltax.^2 + deltay.^2);
 
 %mouse speed
 speed=sqrt(diff(sheadbasex).^2 + diff(sheadbasex).^2);

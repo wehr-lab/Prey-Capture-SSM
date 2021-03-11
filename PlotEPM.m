@@ -5,10 +5,11 @@ function PlotEPM(datadir)
 if nargin==0 datadir=pwd;end
 cd(datadir)
 load pruned_tpm
+load training_data
 close all
 fprintf('\nplotting emission probabilies for data in\n %s\n', pwd)
 
-obs_dim=size(X, 2);
+obs_dim=size(undecX, 2);
 for i=1:pruned_num_states
     starts=pruned_epochs(i).starts;
     stops=pruned_epochs(i).stops;
@@ -16,8 +17,8 @@ for i=1:pruned_num_states
     for e=1:pruned_epochs(i).num_epochs
         frames=[frames starts(e):stops(e)];
     end
-    mean_obs(i,:)=mean(X(frames,:));
-    std_obs(i,:)=std(X(frames,:));
+    mean_obs(i,:)=mean(undecX(frames,:));
+    std_obs(i,:)=std(undecX(frames,:));
 end
 
 mean_obs=mean_obs'; %flip

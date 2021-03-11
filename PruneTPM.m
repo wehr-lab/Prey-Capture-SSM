@@ -14,10 +14,9 @@ load ssm_posterior_probs.mat
 load training_data
 num_states=double(num_states);
 
-post_probs=Ps{1};
-K=size(post_probs, 2);
+K=size(post_probs_undec, 2);
 for k=1:K
-    pp=post_probs(:,k)';
+    pp=post_probs_undec(:,k)';
     xs=find(pp>.8);
     dxs=diff(xs);
     stopsi=find(dxs>1);
@@ -70,6 +69,7 @@ fprintf('\nexcluding epochs of less than %d frames', epoch_duration_cutoff)
 fprintf('\nexcluding %d of %d epochs (%d %%)',length(find(durs<=epoch_duration_cutoff)), length(durs), round(100*length(find(durs<=epoch_duration_cutoff))/length(durs)))
 
 kk=0;
+Z2k=nan(num_states, 1);
 for k=1:num_states
     if ~ismember(k, excluded_states)
         starts=epochs(k).starts;
@@ -84,6 +84,8 @@ for k=1:num_states
             pruned_epochs(kk).num_epochs=length(surviving_epochs);
             pruned_epochs(kk).numframes=numframes(surviving_epochs);
             pruned_epochs(kk).total_numframes=sum(numframes(surviving_epochs));
+            pruned_epochs(kk).Z=k; %map from pruned_epochs k (dim=pruned_num_epochs)to Z (dim=num_states)  
+            Z2k(k)=kk; %map from Z to pruned_epochs k
         end
     end
 end
@@ -260,12 +262,13 @@ readme={
     };
 
 save pruned_tpm num_states epoch_duration_cutoff post_probs ...
-     Ps epochs surviving_frames surviving_state_list survival_mask readme ...
+    Ps epochs surviving_frames surviving_state_list survival_mask readme ...
     TM excluded_states pruned_epochs surviving_state_list ...
     X pruned_num_epochs X_description pruned_num_states ...
+    Zundec post_probs post_probs_undec ...
     tpm DirList hmm_lls Z Zsym ...
     num_epochs state_duration_cutoff ...
-     run_on localframenum
+    run_on localframenum
 
 
 fprintf('\nsaved results in pruned_tpm.mat')
