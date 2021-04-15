@@ -13,6 +13,7 @@ cd(datadir)
 load ssm_posterior_probs.mat
 load training_data
 num_states=double(num_states);
+fprintf('\nmax log likelihood %g', max(hmm_lls))
 
 K=size(post_probs_undec, 2);
 for k=1:K
@@ -65,7 +66,7 @@ xlabel('epoch duration');ylabel('count')
 %based on inpection,
 %I'm arbitrarily choosing 2 frames as the cutoff
 % epoch_duration_cutoff=10; %moved to parameter section at top
-fprintf('\nexcluding epochs of less than %d frames', epoch_duration_cutoff)
+fprintf('\nexcluding epochs of less than %d frames (%.0fms)', epoch_duration_cutoff, 1e3*epoch_duration_cutoff/framerate)
 fprintf('\nexcluding %d of %d epochs (%d %%)',length(find(durs<=epoch_duration_cutoff)), length(durs), round(100*length(find(durs<=epoch_duration_cutoff))/length(durs)))
 
 kk=0;
@@ -102,7 +103,14 @@ end
 figure
 hist(durs, 100)
 xlabel('post-pruning epoch duration');ylabel('count')
+fprintf('\npost-pruning epoch durations, median %.0f, IQR %.0f, mean %.0f, SD %.0f', ...
+    median(durs), iqr(durs), mean(durs), std(durs))
 
+fprintf('\nmedian epoch durations:')
+for k=1:pruned_num_states
+    durs=pruned_epochs(k).numframes;
+    fprintf('\nk%d: %.0f', k, median(durs))
+end
 
 %this just lists the surviving frames for easy look-up
 %although I don't think I actually use it

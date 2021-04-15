@@ -98,11 +98,15 @@ load('training_data.mat')
 % end
 
 cd (outputdir)
+datadirs_by_frame=datadirs_by_frame;
+pruned_num_states=pruned_num_states;
+pruned_epochs=pruned_epochs;
+localframenum=localframenum;
 
-for k=1:pruned_num_states
+for k=8:pruned_num_states
     fprintf('\nstate %d/%d ', k, pruned_num_states );
     nbytes = fprintf(' epoch 0/%d', pruned_epochs(k).num_epochs );
-    for e=1:min(36, pruned_epochs(k).num_epochs)
+    for e=1:min(25, pruned_epochs(k).num_epochs)
         fprintf(repmat('\b',1,nbytes));
         nbytes = fprintf(' epoch %d/%d', e,pruned_epochs(k).num_epochs );
         
@@ -120,42 +124,50 @@ for k=1:pruned_num_states
             %rare situation where epoch spans a movie boundary
             %localframenum(absframes)
             absframes=absstartframe:absstopframe;
-            movieboundary=find(localframenum(absframes)==1);
+            %             movieboundary=find(localframenum(absframes)==1); %this won't
+            %             work now since localframenum starts at cricketdropframe, not at 1
+            movieboundary=find(diff(localframenum(absframes))<1, 1);
             if movieboundary>round(length(absframes)/2)
                 %keep the part of epoch that's in the first movie
-                localstopframe=movieboundary-1;
+                L=localframenum(absframes);
+                localstopframe=L(movieboundary);
             elseif movieboundary<=round(length(absframes)/2)
                 %keep the part of epoch that's in the second movie
-                localstartframe=1;
-                moviedir=datadirs_by_frame{absstartframe};
+                L=localframenum(absframes);
+                localstartframe=L(movieboundary+1);
+                moviedir=datadirs_by_frame{absstopframe};
             else %not sure what's wrong with this movie boundary so let's just bail on this epoch
                 warning(sprintf('not sure what''s wrong with this movie boundary, bailing on this epoch (state %d epoch %d)', k, e))
                 skipepoch=1;
             end
         end
         if ~skipepoch
-        cd(moviedir)
-        d=dir('*labeled.mp4');
-        movie_filename=d(1).name;
-        v = VideoReader(fullfile(moviedir, movie_filename));
-        if localstopframe>v.NumFrames
-            warning(sprintf('localstopframe is off from v.NumFrames by %d frames', localstopframe-v.NumFrames))
-            localstopframe=v.NumFrames; %
-        end
-        vidFrames = read(v, [localstartframe, localstopframe]) ;
-        vidFrames=imresize(vidFrames, .5);
-        str=sprintf('k%d e%d', k,e);
-        for f=1:size(vidFrames, 4)
-            vidFrames(:,:,:,f) = insertText(vidFrames(:,:,:,f),[5,5],str,...
-                'FontSize',60,'Font', 'Arial', 'BoxColor', 'g',  ...
-                'BoxOpacity',0.4,'TextColor','white');
-        end
-        out_movie_filename=sprintf('ssm_state_epoch_clip-%d-%d', k, e);
-        out_movie_fullfilename=fullfile(outputdir, out_movie_filename);
-        vout = VideoWriter(out_movie_fullfilename, 'MPEG-4');
-        open(vout)
-        writeVideo(vout,vidFrames)
-        close(vout)
+            cd(moviedir)
+            d=dir('*labeled.mp4');
+            movie_filename=d(1).name;
+            v = VideoReader(fullfile(moviedir, movie_filename));
+            if localstopframe>v.NumFrames
+                warning(sprintf('localstopframe is off from v.NumFrames by %d frames', localstopframe-v.NumFrames))
+                localstopframe=v.NumFrames; %
+            end
+            %         trim really long epochs to some max length e.g. 10 s
+            if localstopframe-localstartframe > 10*v.FrameRate
+                localstopframe=round(localstartframe + 10*v.FrameRate);
+            end
+            vidFrames = read(v, [localstartframe, localstopframe]) ;
+            vidFrames=imresize(vidFrames, .5);
+            str=sprintf('k%d e%d', k,e);
+            for f=1:size(vidFrames, 4)
+                vidFrames(:,:,:,f) = insertText(vidFrames(:,:,:,f),[5,5],str,...
+                    'FontSize',60,'Font', 'Arial', 'BoxColor', 'g',  ...
+                    'BoxOpacity',0.4,'TextColor','white');
+            end
+            out_movie_filename=sprintf('ssm_state_epoch_clip-%d-%d', k, e);
+            out_movie_fullfilename=fullfile(outputdir, out_movie_filename);
+            vout = VideoWriter(out_movie_fullfilename, 'MPEG-4');
+            open(vout)
+            writeVideo(vout,vidFrames)
+            close(vout)
         end
     end
 end

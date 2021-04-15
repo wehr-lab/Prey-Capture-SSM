@@ -13,27 +13,27 @@ function PlotStatePSTH(outputdir)
 
 if nargin==0
     close all
-    outputdir='/Volumes/Lennon/Documents/Analysis/PreyCapture data/state_epoch_clips-10-Mar-2021'
+    outputdir=pwd;
 end
 
+fprintf('%s', outputdir)
 cd (outputdir)
 outpsfilename='state-psths.ps';
 delete(outpsfilename)
 load('pruned_tpm.mat')
-load('training_data.mat')
+td=load('training_data.mat');
 
 
 cumstartframe=1;
-for i=1:length(datadirs);
-    numframes=groupdata(i).numframes;
+for i=1:length(td.datadirs);
+    numframes=td.groupdata(i).numframes;
     cumstartframes(i)=cumstartframe;
     cumstopframes(i)=cumstartframe+numframes-1;
     cumstartframe=cumstartframe+numframes;
 end
 
-for i=1:length(datadirs);
-    fprintf('\n_____________________________________________________\n')
-    fprintf('\ndir %d/%d', i, length(datadirs))
+
+for i=1:length(td.datadirs);
     if ismember(i, [61 62 63 64 65 66  ]) %messed up data
         %keyboard
     else
@@ -44,30 +44,30 @@ for i=1:length(datadirs);
         
         if get(gcf, 'Number')>20 keyboard;end
         
-        cricketdropframe=groupdata(i).cricketdropframe;
-        catchframe=groupdata(i).catchframe;
-        if catchframe>groupdata(i).numframes
+        cricketdropframe=td.groupdata(i).cricketdropframe;
+        catchframe=td.groupdata(i).catchframe;
+        if catchframe>td.groupdata(i).numframes
             %rare case where catch=last frame and there's an off-by-one error
-            catchframe=groupdata(i).numframes;
+            catchframe=td.groupdata(i).numframes;
         end
         %the geometry variables run from cricketdropframe to catchframe
         
         %plot some geometry for this recording
-        t=1:length(groupdata(i).range);
-        t=t/groupdata(i).framerate;
+        t=1:length(td.groupdata(i).range);
+        t=t/td.groupdata(i).framerate;
         fig1=figure;
-        [~,dirname]=fileparts(datadirs{i});
+        [~,dirname]=fileparts(td.datadirs{i});
         title(dirname);
         hold on
-        range=groupdata(i).range;
+        range=td.groupdata(i).range;
         nrange=range/max(abs(range));
-        speed=groupdata(i).speed;
+        speed=td.groupdata(i).speed;
         nspeed=speed/max(abs(speed));
-        cspeed=groupdata(i).cspeed;
+        cspeed=td.groupdata(i).cspeed;
         ncspeed=cspeed/max(abs(cspeed));
-        RelativeAzimuth=groupdata(i).RelativeAzimuth;
+        RelativeAzimuth=td.groupdata(i).RelativeAzimuth;
         nRelativeAzimuth=RelativeAzimuth/max(abs(RelativeAzimuth));
-        mouse_thigmo_distance=groupdata(i).mouse_thigmo_distance;
+        mouse_thigmo_distance=td.groupdata(i).mouse_thigmo_distance;
         nmouse_thigmo_distance=mouse_thigmo_distance/max(abs(mouse_thigmo_distance));
         plot(t, nrange, 'linew', 2)
         plot(t, nspeed, 'linew', 2)
@@ -77,11 +77,12 @@ for i=1:length(datadirs);
         numframes=length(t);
         localZ=Zundec(cumstartframes(i):cumstopframes(i));
         plot( t, 1+.25*double(localZ)/num_states)
-        legend('range', 'mouse speed', 'cricket speed', 'azimuth', 'thigmo', 'Z','AutoUpdate','off')
+        legend('range', 'mouse speed', 'cricket speed', 'azimuth', 'thigmo', 'Z',...
+            'AutoUpdate','off', 'location',  'eastoutside')
         xlabel('time, s')
         
         %get spiketimes and alignment
-        datadir=datadirs{i};
+        datadir=td.datadirs{i};
         if ismac datadir=macifypath(datadir);end
         cd(datadir)
         [vids,units,chans] = AssimilateSignals(cricketdropframe, catchframe);
@@ -102,7 +103,7 @@ for i=1:length(datadirs);
         yl=ylim;
         yl(2)=yl(2)+.05;
         ylim(yl);
-
+        
         %plot states/epochs as shaded boxes
         % figure('pos', [430   923   560   420])
         % hold on
@@ -125,10 +126,10 @@ for i=1:length(datadirs);
                     Xidx=[epoch_starts(e), epoch_starts(e), epoch_stops(e), epoch_stops(e)];
                     Xidx=Xidx-cumstartframes(i); % convert to local frames
                     X=t(Xidx); %convert to local time in seconds (to match spiketimes)
-                    Y=[0 yl(2) yl(2)  0];
+                    Y=[1 yl(2) yl(2)  1];
                     jb=fill(X, Y, c, 'facealpha', .25, 'edgecolor', 'none');
                     
-                        text(X(1), Y(2), int2str(k), 'verticalalign', 'top')
+                    text(X(1), Y(2), int2str(k), 'verticalalign', 'top')
                     
                 end
             end
@@ -150,16 +151,30 @@ for i=1:length(datadirs);
         fig2=figure('pos', [1570 144  924  1201]);
         title(dirname);
         
-        subplot1(pruned_num_states, 1)
+        %count how many states occured on this trial
+        %so we can set up the plot to only plot those
+        P=0;
         for k=1:pruned_num_states
-            subplot1(k)
-            hold on
+            epoch_start_idx=find(pruned_epochs(k).starts>cumstartframes(i) & ...
+                pruned_epochs(k).starts<cumstopframes(i));
+            epoch_starts=pruned_epochs(k).starts(epoch_start_idx);
+            if length(epoch_starts)>0
+                P=P+1;
+            end
+        end
+        
+        subplot1(P, 1)
+        p=0;
+        for k=1:pruned_num_states
             offset=0;
             %find epoch starts within this trial
             epoch_start_idx=find(pruned_epochs(k).starts>cumstartframes(i) & ...
                 pruned_epochs(k).starts<cumstopframes(i));
             epoch_starts=pruned_epochs(k).starts(epoch_start_idx);
             if length(epoch_starts)>0
+                p=p+1;
+                subplot1(p)
+                hold on
                 ylabel(sprintf('state %d\n%d epochs', k,length(epoch_starts) ))
                 
                 clear fr nfr
@@ -183,10 +198,11 @@ for i=1:length(datadirs);
                         
                         %psth=conv(allst, gaussian(100, .25));
                         [n,x]=hist(allst, [-.5:.01:.75]);
-                        fr(u,:)=smooth(n);
+                        temp=smooth(n);
                     else
-                        fr(u,:)=zeros(size(([-.5:.01:.75])));
+                        temp=zeros(size(([-.5:.01:.75])));
                     end
+                    fr(u,:)=temp;
                 end
                 nfr=fr./max(fr(:)); %normalize
                 
@@ -202,9 +218,12 @@ for i=1:length(datadirs);
             end
             
         end
+        xlabel('time, s')
         
     end
     
+    fprintf('\ndir %d/%d', i, length(td.datadirs))
+    fprintf('\n_____________________________________________________\n')
     
     
     cd(outputdir)

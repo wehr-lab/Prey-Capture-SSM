@@ -17,7 +17,7 @@ figure
 plot(hmm_lls)
 xlabel('iteration')
 ylabel('log likelihood')
-
+fprintf('\nmax log likelihood %g', max(hmm_lls))
 
 t=1:length(X);
 post_probs=Ps{1};

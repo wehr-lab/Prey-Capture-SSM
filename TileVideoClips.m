@@ -12,7 +12,7 @@ cd(outputdir)
 
 n=0;
 
-arraysize='5x5';
+arraysize='3x3';
 %could be '3x3', '4x4', '5x5', '6x6'
 fprintf('\ntiling clips in a %s array', arraysize);
 
@@ -29,6 +29,7 @@ end
 num_states=max(allks);
 fprintf('\n%d states', num_states)
 
+%this breaks for non-sequential epochs
 for k=1:num_states
     e=1;
     movie_filename=fullfile(outputdir, sprintf('ssm_state_epoch_clip-%d-%d.mp4', k, e));
@@ -38,6 +39,17 @@ for k=1:num_states
     end
     numepochs(k)=e-1;
 end
+
+%I halfway switched to using non-sequential epochs, but then went back and
+%(hopefully) fixed the movie-boundary code in GenerateStateEpochClips that
+%was skipping epochs, so the main loop below still assumes sequential
+%epochs
+
+% for k=1:num_states
+%     movie_filename=fullfile(outputdir, sprintf('ssm_state_epoch_clip-%d-*.mp4', k));
+%     d=dir(movie_filename);
+%     numepochs(k)=length(d);
+% end
 
 tic
 % Scan video clips to get number of frames in each clip, and store them in
@@ -49,7 +61,7 @@ try
 catch
     for k=1:num_states
         fprintf(' %d', k)
-        for e=1:numepochs(k)
+        for e=1:numepochs(k)           
             movie_filename=fullfile(outputdir, sprintf('ssm_state_epoch_clip-%d-%d.mp4', k, e));
             vobj=VideoReader(movie_filename);
             NumFrames(k,e)=vobj.NumFrames;
@@ -101,6 +113,7 @@ switch arraysize
             fprintf('\nk %d:', k)
             fprintf(' %d', sNumFrames(k,1:10))
             maxnumframes=sNumFrames(k,1);
+            maxnumframes=min(maxnumframes, 1000); %trim to 5 seconds max
             nbytes = fprintf('\tframe 0 of %d', maxnumframes);
             for f=1:maxnumframes
                 fprintf(repmat('\b',1,nbytes))
@@ -452,10 +465,11 @@ toc
 % now create a monolithic composite of all states in sequence
 tic
 fprintf('\ngenerating monolithic composite...')
+
 out_movie_filename_mono=fullfile(outputdir, sprintf('all_states_comp%s', arraysize));
 vout = VideoWriter(out_movie_filename_mono, 'MPEG-4');
-load training_data
-vout.FrameRate=groupdata(1).framerate;
+td=load ('training_data');
+vout.FrameRate=td.groupdata(1).framerate;
 open(vout);
 for k=[1:num_states]
     in_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));
@@ -463,11 +477,14 @@ for k=[1:num_states]
         vin = VideoReader(in_movie_filename);
         fprintf('\nk %d:', k)
         nbytes=fprintf(' %d/10', 0);
+        fc=0; %count frames in state to limit numloops if it's a really long one
         for i=1:10
             fprintf(repmat('\b',1,nbytes))
             nbytes=fprintf(' %d/10', i);
             vin.CurrentTime=0;
+            if fc<1000 %5 second time limit
             for f=1:vin.NumFrames
+                fc=fc+1;
                 vidFrame = readFrame(vin) ;
                 str=sprintf('loop %d',i);
                 vidFrame = insertText(vidFrame,[20,125],str,...
@@ -475,6 +492,7 @@ for k=[1:num_states]
                     'BoxOpacity',0.0,'TextColor','red');
                 vidFrame=imresize(vidFrame, .25);
                 writeVideo(vout,vidFrame)
+            end
             end
         end
     end

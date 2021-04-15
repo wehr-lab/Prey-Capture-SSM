@@ -53,7 +53,7 @@ outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today)
 cd(outputroot)
 mkdir(outputdir)
 cd(outputdir)
-% [DirList, dirlistpath] = uigetfile('*.txt', 'select DirList of data directories to scan');
+% [DirL     ist, dirlistpath] = uigetfile('*.txt', 'select DirList of data directories to scan');
 % if isequal(DirList,0) || isequal(dirlistpath,0)
 %     fprintf('\ncancelled')
 %     return
@@ -73,6 +73,7 @@ system(activate_venv_cmd);
 system(cmdstr);
 
 % since we decimated ConvertGeometryToObservations, now we un-decimate the Z returned by the hmm
+fprintf('\nundecimating...')
 load ssm_posterior_probs
 td=load('training_data');
 post_probs=Ps{1};
@@ -93,6 +94,6 @@ PruneTPM(outputdir)
 PlotEPM(outputdir)
 GenerateStateEpochClips(outputdir)
 TileVideoClips(outputdir)
-LabelMovieStates(outputdir)
+% LabelMovieStates(outputdir)
 PlotStatePSTH(outputdir)
 
