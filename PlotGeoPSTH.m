@@ -108,7 +108,7 @@ for i=1:length(td.datadirs);
             spiketimes=units(u).spiketimes;
             spiketimes=spiketimes-start; %align to cricketdrop
             
-            %this puts the psth amplerate at framerate
+            %this puts the psth samplerate at framerate
             binwidth= 1/td.groupdata(1).framerate; %s
             %psth=conv(allst, gaussian(100, .25));
             [n,x]=hist(spiketimes, [0:binwidth:t(end)]);

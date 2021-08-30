@@ -12,7 +12,7 @@ cd(outputdir)
 
 n=0;
 
-arraysize='3x3';
+arraysize='5x5';
 %could be '3x3', '4x4', '5x5', '6x6'
 fprintf('\ntiling clips in a %s array', arraysize);
 

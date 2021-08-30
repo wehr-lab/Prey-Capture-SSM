@@ -103,7 +103,7 @@ pruned_num_states=pruned_num_states;
 pruned_epochs=pruned_epochs;
 localframenum=localframenum;
 
-for k=8:pruned_num_states
+for k=1:pruned_num_states
     fprintf('\nstate %d/%d ', k, pruned_num_states );
     nbytes = fprintf(' epoch 0/%d', pruned_epochs(k).num_epochs );
     for e=1:min(25, pruned_epochs(k).num_epochs)

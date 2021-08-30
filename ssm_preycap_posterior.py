@@ -8,12 +8,12 @@ import os
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
-num_states = 60    # number of discrete states
+num_states = 30    # number of discrete states
 observation_class = 'autoregressive'
-obs_dim = 14       # dimensionality of observation
+obs_dim = 6       # dimensionality of observation
 transitions = 'sticky'
-kappa = 1E14
-AR_lags =  20
+kappa = 1E12
+AR_lags =  10
 hmm = ssm.HMM(num_states, obs_dim,
               observations=observation_class, observation_kwargs={'lags':AR_lags},
               transitions=transitions, transition_kwargs={'kappa': kappa})

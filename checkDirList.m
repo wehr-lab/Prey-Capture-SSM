@@ -42,7 +42,7 @@ while 1 %processes until end of file is reached, then breaks
             fprintf('\n\t found file %s ', d(1).name)
         end
         d=dir('Assimilation.mat');
-        if 0%~isempty (d)
+        if ~isempty (d)
             fprintf('\n\t found assimilation file %s ', d.name)
         else
             myWorkflow

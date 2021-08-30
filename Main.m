@@ -21,7 +21,7 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         %root directory for source movies
         local_movie_root='/Volumes/Lennon/Prey Capture/Netanyas Source Videos/';
         %output directory for results and generated video clips
-        outputroot='/Volumes/Lennon/Documents/Analysis/PreyCapture data';
+        outputroot='/Volumes/Lennon/Prey Capture';
         %local path to python3
         pypath='/usr/local/bin/python3';
         activate_venv_cmd='source ~/virtualenvironment/ssmenv/bin/activate'
@@ -58,8 +58,11 @@ cd(outputdir)
 %     fprintf('\ncancelled')
 %     return
 % end
-DirList=    'processedvids_ephys.txt';
-dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Molly/';
+
+% DirList=    'processedvids_ephys.txt';
+% dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Molly/';
+DirList=    'combined_05_12_21.txt';
+dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Kip/';
 
 
 ConvertGeometryToObservations(DirList, dirlistpath, outputdir)
@@ -95,5 +98,5 @@ PlotEPM(outputdir)
 GenerateStateEpochClips(outputdir)
 TileVideoClips(outputdir)
 % LabelMovieStates(outputdir)
-PlotStatePSTH(outputdir)
+%PlotStatePSTH(outputdir)
 

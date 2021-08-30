@@ -22,9 +22,14 @@ elseif nargin==2
 end
 
 cd(datapath)
+
+% fprintf('\nforce re-process Behavior_mouse with ProcessCams in ConvertDLCtoGeometry')
+% ProcessCams
+
 d=dir('Behavior_mouse-*.mat');
 if length(d)==0
     warning('no Behavior_mouse file in this directory')
+    fprintf('\nrunning ProcessCams')
     ProcessCams
     d=dir('Behavior_mouse-*.mat');
     warning('no Behavior_mouse file in this directory')
@@ -45,13 +50,23 @@ outfilename=strrep(behavior_datafile, 'Behavior_mouse', 'geometry');
 % tailbase
 % tailtip
 
-headbase=Sky.dlc.headbase;
-nose=Sky.dlc.nose;
-rightear=Sky.dlc.rightear;
-leftear=Sky.dlc.leftear;
-tailbase=Sky.dlc.tailbase;
-cricketback=Sky.dlc.cricketback;
-cricketfront=Sky.dlc.cricketfront;
+try
+    headbase=Sky.dlc.headbase;
+    nose=Sky.dlc.nose;
+    rightear=Sky.dlc.rightear;
+    leftear=Sky.dlc.leftear;
+    tailbase=Sky.dlc.tailbase;
+    cricketback=Sky.dlc.cricketback;
+    cricketfront=Sky.dlc.cricketfront;
+catch 
+    headbase=Sky.dlc.topOfHead;
+    nose=Sky.dlc.nose;
+    rightear=Sky.dlc.rightEar;
+    leftear=Sky.dlc.leftEar;
+    tailbase=Sky.dlc.baseOfTail;
+    cricketback=Sky.dlc.cricketTail;
+    cricketfront=Sky.dlc.cricketHead;
+end
 
 try
     framerate=Sky.vid.framerate;
