@@ -35,6 +35,16 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         %local path to python3
         pypath='C:\Users\Kat\python'
         %'/usr/local/bin/anaconda3.exe';
+    case 'dyn-10-109-6-101.wless.uoregon.edu'
+        % path and filename(s) of group data with DLC tracks
+        groupdatadir='/Users/mollyshallow/Desktop/Wehr_Lab/PreyCaptureHMM';
+        groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; %cell array of filenames
+        %root directory for source movies
+        local_movie_root='mount to rig2';
+        %output directory for results and generated video clips
+        outputroot='/Users/mollyshallow/Desktop/Wehr_Lab/PreyCaptureHMM';
+        %local path to python3
+        pypath='/Users/mollyshallow/opt/anaconda3/bin/python3';
     otherwise
         fprintf('don''t recognize computer %s', java.net.InetAddress.getLocalHost.getHostName)
         return
