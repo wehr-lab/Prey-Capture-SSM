@@ -64,8 +64,10 @@ cd(outputdir)
 DirList=    'm0058_05_12_21.txt';
 dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Kip/';
 
+csvfilename='/Volumes/Lennon/Dropbox (University of Oregon)/Wehrlab/Prey Capture/data.csv';
 
-ConvertGeometryToObservations(DirList, dirlistpath, outputdir)
+%ConvertGeometryToObservations(DirList, dirlistpath, outputdir)
+ConvertGeoCSVToObservations(csvfilename, outputdir)
 
 [repositorydir,~,~]=fileparts(which(mfilename));
 ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');

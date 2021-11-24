@@ -10,7 +10,7 @@ import os
 #np.random.seed(1)
 num_states = 30    # number of discrete states
 observation_class = 'autoregressive'
-obs_dim = 6       # dimensionality of observation
+obs_dim = 9       # dimensionality of observation
 transitions = 'sticky'
 kappa = 1E12
 AR_lags =  10
