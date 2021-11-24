@@ -61,7 +61,7 @@ cd(outputdir)
 
 % DirList=    'processedvids_ephys.txt';
 % dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Molly/';
-DirList=    'combined_05_12_21.txt';
+DirList=    'm0058_05_12_21.txt';
 dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Kip/';
 
 
@@ -95,8 +95,8 @@ PlotPosteriorProbs(outputdir)
 
 PruneTPM(outputdir)
 PlotEPM(outputdir)
-GenerateStateEpochClips(outputdir)
-TileVideoClips(outputdir)
+%GenerateStateEpochClips(outputdir)
+%TileVideoClips(outputdir)
 % LabelMovieStates(outputdir)
 %PlotStatePSTH(outputdir)
 
