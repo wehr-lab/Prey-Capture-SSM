@@ -76,7 +76,7 @@ for k=1:pruned_num_states
                 cd(talapasmoviedir)
                 d=dir('*labeled.mp4');
                 movienamemp4=d(end).name;
-                movienameavi=strrep(nasmovienamemp4, 'mp4', 'avi');
+                movienameavi=strrep(movienamemp4, 'mp4', 'avi');
                 %                 str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
                 %                 eval(str)
                 [~,moviename, ~]=fileparts(movienamemp4);
