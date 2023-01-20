@@ -105,7 +105,7 @@ for k=1:pruned_num_states
             str=sprintf('s%d e%d', k,e);
             for f=1:size(vidFrames, 4)
                 vidFrames(:,:,:,f) = insertText(vidFrames(:,:,:,f),[5,5],str,...
-                    'FontSize',60,'Font', 'Arial', 'BoxColor', 'g',  ...
+                    'FontSize',60, 'BoxColor', 'g',  ... %'Font', 'Arial'
                     'BoxOpacity',0.4,'TextColor','white');
             end
             out_movie_filename=sprintf('ssm_state_epoch_clip-%d-%d', k, e);
