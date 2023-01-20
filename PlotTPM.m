@@ -41,7 +41,7 @@ tree=linkage(tpm, 'average');
 colorthresh=.9*max(tree(:,3)); %threshold for color-coding the clusters
 [H,T,outperm] = dendrogram(tree,0,'Orientation','left','ColorThreshold',colorthresh);
 set(H,'LineWidth',2)
-size(outperm)
+size(outperm);
 figure
 imagesc(tpm(outperm,outperm))
 colormap(hot)
