@@ -78,8 +78,8 @@ for k=1:pruned_num_states
                 movienamemp4=d(end).name;
                 movienameavi=strrep(movienamemp4, 'mp4', 'avi');
                 [~,moviename, ~]=fileparts(movienamemp4);
-                str=sprintf('!ffmpeg -i %s.mp4 -vcodec mjpeg -q:v 1 -an %s.avi', moviename, moviename)
-                if ~exist(movienameavi)==2
+                str=sprintf('!ffmpeg -i %s.mp4 -vcodec mjpeg -q:v 1 -an %s.avi', moviename, moviename);
+                if exist(movienameavi)~=2
                     eval(str)
                 end
                 movie_filename=movienameavi;
