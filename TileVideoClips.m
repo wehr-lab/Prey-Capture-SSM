@@ -71,7 +71,7 @@ catch
         for e=1:numepochs(k)           
             movie_filename=fullfile(outputdir, sprintf('ssm_state_epoch_clip-%d-%d.%s', k, e, ext));
             vobj=VideoReader(movie_filename);
-            NumFrames=ceil(v.FrameRate*v.Duration);
+            NumFrames=ceil(vobj.FrameRate*vobj.Duration);
             %note that mmfileinfo takes almost exactly as long
         end
     end
