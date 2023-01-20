@@ -77,11 +77,9 @@ for k=1:pruned_num_states
                 d=dir('*labeled.mp4');
                 movienamemp4=d(end).name;
                 movienameavi=strrep(movienamemp4, 'mp4', 'avi');
-                %                 str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
-                %                 eval(str)
                 [~,moviename, ~]=fileparts(movienamemp4);
                 str=sprintf('!ffmpeg -i %s.mp4 -vcodec mjpeg -q:v 1 -an %s.avi', moviename, moviename)
-                if ~exist(nasmovienameavi)==2
+                if ~exist(movienameavi)==2
                     eval(str)
                 end
                 movie_filename=movienameavi;
