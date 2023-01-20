@@ -9,7 +9,9 @@ for f=figs
     figure(f)
     drawnow
     pause(.1)
+    fprintf('\nprinting figure %d', f.Number)
     print('-dpsc2', '-append', '-bestfit', psfilename)
     pause(.1)
+    fprintf('\n closing figure %d', f.Number)
     close
 end

@@ -1,5 +1,5 @@
 function TileVideoClips(outputdir)
-
+mfilename
 %Usage: TileVideoClips(outputdir)
 %load state-epoch video clips and tile them into composite video
 
