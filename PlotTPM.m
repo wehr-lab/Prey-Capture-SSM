@@ -48,3 +48,5 @@ colormap(hot)
 axis square
 set(gca, 'xtick', 1:length(T), 'ytick', 1:length(T), 'xticklabel', outperm, 'yticklabel', outperm)
 title('symbolic tpm all data, clustered')
+xlabel('state t')
+ylabel('state t-1')

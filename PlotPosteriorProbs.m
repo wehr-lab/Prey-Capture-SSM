@@ -18,18 +18,61 @@ plot(hmm_lls)
 xlabel('iteration')
 ylabel('log likelihood')
 fprintf('\nmax log likelihood %g', max(hmm_lls))
+title(datadir, 'interpreter', 'none')
 
 t=1:length(X);
+t=t/(framerate/decimate_factor);
 post_probs=Ps{1};
 % post probs is T x k
 K=size(post_probs, 2);
 colors=jet(K);
 
+framerange=1250; %pointless and slow to plot more than this
+figure
+for i=1:5
+    subplot(5,1,i)
+    frames=(i-1)*framerange+1:i*framerange;
+    h=plot(t(frames), X(frames,:));
+    yl=ylim;
+    for k=1:K
+        pp=post_probs(:,k)';
+        xs=find(pp>.8);
+        dxs=diff(xs);
+        stops=find(dxs>1);
+        starts=[1 stops+1];
+        starts=starts(1:end-1);
+        for i=1:length(starts)
+            c=colors(k,:);
+            x=xs(starts(i):stops(i));
+            if x(end)>frames(end)
+                break
+            end
+            x=x/(framerate/decimate_factor);
+            jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
+            text(mean(x), 4, int2str(k))
+        end
+    end
+    xlim([t(frames(1)) t(frames(end))])
+    ylim([-5 5])
+    %highlight your favorite
+    idx=find(contains(X_description, 'Range'));
+    set(h(idx)', 'linewidth', 2)
+end
+legend(X_description)
+orient tall
+% try
+%     title(condition.note)
+% catch
+%     title([condition1.note, condition2.note])
+% end
+print -dpng post_probs.png
+
 %plot observation data with states colored by jbfill shading where prob>0.8
+maxrange=1:10000; %pointless and slow to plot more than this
 figure
 clf
 subplot(211)
-plot(t, X)
+h=plot(t(maxrange), X(maxrange,:));
 yl=ylim;
 for k=1:K
     pp=post_probs(:,k)';
@@ -41,9 +84,17 @@ for k=1:K
     for i=1:length(starts)
         c=colors(k,:);
         x=xs(starts(i):stops(i));
+        x=x/(framerate/decimate_factor);
         jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
     end
 end
+ylim([-5 5])
+legend(X_description)
+zoom xon
+%highlight your favorite
+idx=find(contains(X_description, 'Range'));
+set(h(idx)', 'linewidth', 2)
+xlim([1 t(maxrange(end))])
 
 %this plots posterior probabilities of each state
 %also with state color-coding by jbfill
@@ -72,6 +123,7 @@ for k=1:K
     for i=1:length(starts)
         c=colors(k,:);
         x=starts(i):stops(i);
+        x=x/(framerate/decimate_factor);
         jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
     end
 end

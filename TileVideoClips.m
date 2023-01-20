@@ -12,7 +12,7 @@ cd(outputdir)
 
 n=0;
 
-arraysize='5x5';
+arraysize='5x5'%'3x3';
 %could be '3x3', '4x4', '5x5', '6x6'
 fprintf('\ntiling clips in a %s array', arraysize);
 
@@ -58,6 +58,7 @@ fprintf('\ngetting numFrames...')
 try
     cd(outputdir)
     load NumFrames
+    fprintf('\nloaded Numframes from file')
 catch
     for k=1:num_states
         fprintf(' %d', k)
@@ -466,10 +467,10 @@ toc
 tic
 fprintf('\ngenerating monolithic composite...')
 
-out_movie_filename_mono=fullfile(outputdir, sprintf('all_states_comp%s', arraysize));
+out_movie_filename_mono=fullfile(outputdir, sprintf('all_states_comp%s.mp4', arraysize));
 vout = VideoWriter(out_movie_filename_mono, 'MPEG-4');
 td=load ('training_data');
-vout.FrameRate=td.groupdata(1).framerate;
+vout.FrameRate=td.framerate;
 open(vout);
 for k=[1:num_states]
     in_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));
@@ -498,5 +499,29 @@ for k=[1:num_states]
     end
 end
 close(vout)
+
+% resample to 30 fps if desired
+
+load ('training_data.mat', 'framerate') 
+if framerate>199
+    fps=30; %desired fps
+    newmoviefilename=replace(out_movie_filename_mono, '.mp4', sprintf('-%dfps.mp4', fps));
+    str=sprintf('!/usr/local/bin/ffmpeg  -i "%s" -r %d "%s"', out_movie_filename_mono, fps, newmoviefilename);
+    eval(str)
+
+    %do the same for the single state comp vids
+for k=[1:num_states]
+    movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));
+    newmoviefilename=replace(movie_filename, '.mp4', sprintf('-%dfps.mp4', fps));
+    str=sprintf('!/usr/local/bin/ffmpeg  -i "%s" -r %d "%s"', movie_filename, fps, newmoviefilename);
+    eval(str)
+end
+
+end
+
+
 toc
 beep
+
+
+

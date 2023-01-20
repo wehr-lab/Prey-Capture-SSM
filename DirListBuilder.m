@@ -62,7 +62,7 @@ end
 function SelectDirs(d)
 global P
 dirlist = uipickfiles;
-if ~dirlist
+if isempty(dirlist)
     fprintf('\nuser pressed cancel or forgot to click "done"')
 else
     

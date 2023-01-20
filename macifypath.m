@@ -14,7 +14,7 @@ if ~ismac
     return 
 end
 if nargin==1
-    rig='rig4'; %default to rig4 I guess
+    rig='ion-nas'; %default 
 else
 rig=varargin{1};
 end
@@ -28,6 +28,10 @@ switch rig
         newpath= strrep(newpath, 'E:', '/Volumes/wehrrig3.uoregon.edu');
     case 'rig4'
         newpath= strrep(newpath, 'D:', '/Volumes/wehrrig4.uoregon.edu');
+    
+    case 'ion-nas'
+        
+        newpath= strrep(newpath, 'ion-nas.uoregon.edu', 'Volumes');
     otherwise
         newpath= strrep(newpath, 'D:', '/Volumes/wehrrig4.uoregon.edu');
 end

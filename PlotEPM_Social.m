@@ -20,17 +20,17 @@ for i=1:pruned_num_states
     mean_obs(i,:)=mean(undecX(frames,:));
     std_obs(i,:)=std(undecX(frames,:));
 
-    %Add in Azimuth
-    sinazi=undecX(frames, find(contains(X_description, 'sinAzi')));
-    cosazi=undecX(frames, find(contains(X_description, 'cosAzi')));
-    azi=atan2(sinazi, cosazi);
-    mean_azi(i)=mean(azi);
+%     %Add in Azimuth
+%     sinazi=undecX(frames, find(contains(X_description, 'sinAzi')));
+%     cosazi=undecX(frames, find(contains(X_description, 'cosAzi')));
+%     azi=atan2(sinazi, cosazi);
+%     mean_azi(i)=mean(azi);
 end
 
 mean_obs=mean_obs'; %flip
-mean_obs(end+1,:)=mean_azi;
-obs_dim=obs_dim+1;
-X_description{end+1}='Azimuth';
+% mean_obs(end+1,:)=mean_azi;
+% obs_dim=obs_dim+1;
+% X_description{end+1}='Azimuth';
 
 % normalize to the range 0,1
 for j=1: obs_dim
@@ -44,7 +44,7 @@ xlabel('state')
 ylabel('observation variable')
 set(gca, 'ytick', 1:obs_dim);
 set(gca, 'yticklabel', X_description);
-title('EPM, not normalized')
+title({'EPM, not normalized', datadir}, 'interpreter', 'none')
 
 figure
 imagesc(nmean_obs)
@@ -100,8 +100,15 @@ set(gca, 'xtick', 1:obs_dim);
 set(gca, 'xticklabel', X_description);
 set(gca, 'xtick',1:pruned_num_states,  'xticklabel', outperm)
 title('EPM, clustered')
-colormap turbo
+try colormap turbo
+catch colormap jet
+end
 colorbar
-cl=clim;
-clim(max(abs(cl))*[-1 1])
+try
+    cl=clim;
+    clim(max(abs(cl))*[-1 1])
+catch
+    cl=caxis;
+    caxis(max(abs(cl))*[-1 1])
+end
 

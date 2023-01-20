@@ -1,4 +1,6 @@
-function GenerateStateEpochClips(outputdir1, localmovieroot)
+function GenerateStateEpochClips_CombinedDataFiles(outputdir1, localmovieroot1, localmovieroot2)
+%Version to handle 2 concatenated datasets with separate moviedirs and dataFrames 
+%
 % slice source videos into video clips for each state and epoch (up to some
 % max num epochs)
 %
@@ -23,21 +25,19 @@ pruned_num_states=pruned_num_states;
 pruned_epochs=pruned_epochs;
 localframenum=localframenum;
 
-for k=1:pruned_num_states
+for k=3%1:pruned_num_states
     fprintf('\nstate %d/%d ', k, pruned_num_states );
     nbytes = fprintf(' epoch 0/%d', pruned_epochs(k).num_epochs );
-    for e=1:min(25, pruned_epochs(k).num_epochs)
+    for e=20:30%1:min(25, pruned_epochs(k).num_epochs)
         fprintf(repmat('\b',1,nbytes));
         nbytes = fprintf(' epoch %d/%d', e,pruned_epochs(k).num_epochs );
         
         absstartframe=pruned_epochs(k).starts(e); %these are relative to X
         absstopframe=pruned_epochs(k).stops(e);
         moviedir=datadirs_by_frame{absstartframe};
-        try
-            landframe=Land(absstartframe); %Land frame of the movie where the data actually starts
-        catch
-            landframe=1; %e.g. Land doesn't even exist for social videos
-        end
+                     
+
+        landframe=Land(absstartframe); %Land frame of the movie where the data actually starts
         % localframenum comes from ConvertGeometryToObservations and
         % already accounts for trimming from cricket drop frame to catch
         % frame
@@ -69,7 +69,12 @@ for k=1:pruned_num_states
             end
         end
         if ~skipepoch
-            cd(localmovieroot)
+            switch hearing_or_deaf{absstartframe}
+                case 'hear'
+                    cd(localmovieroot1)
+                case 'deaf'
+                    cd(localmovieroot2)
+            end
             cd(moviedir)
             d=dir('*labeled.mp4');
             movie_filename=d(1).name;
