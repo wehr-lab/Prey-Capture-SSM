@@ -70,7 +70,8 @@ for k=1:pruned_num_states
         end
         if ~skipepoch
             cd(localmovieroot)
-            if contains(hostname, 'talapas')
+            
+            if contains(char(getHostName(java.net.InetAddress.getLocalHost)), 'talapas')
                 talapasmoviedir=strrep(moviedir, '/Volumes/Projects/Social Approach/', '/gpfs/projects/wehrlab/wehr/');
                 cd(talapasmoviedir)
                 d=dir('*labeled.mp4');
