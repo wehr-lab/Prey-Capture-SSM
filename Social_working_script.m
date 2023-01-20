@@ -10,14 +10,15 @@ cd '/gpfs/projects/wehrlab/wehr/save_OEablationSocial/state_epoch_clips-19-Jan-2
 %cd into target directory first. then:
 outputdir=pwd;
 
-if 0
+if 1
     PlotPosteriorProbs(outputdir)
-PrintFigs(outputdir)
-PruneTPM(outputdir)
-PlotTPM(outputdir)
-PrintFigs(outputdir)
-PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
-PrintFigs(outputdir)
+    PrintFigs(outputdir)
+    PruneTPM(outputdir)
+    PrintFigs(outputdir)
+    PlotTPM(outputdir)
+    PrintFigs(outputdir)
+    PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
+    PrintFigs(outputdir)
 end
 
 GenerateStateEpochClips(outputdir, local_movie_root)
