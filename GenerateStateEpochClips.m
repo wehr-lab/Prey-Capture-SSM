@@ -75,15 +75,17 @@ for k=1:pruned_num_states
                 talapasmoviedir=strrep(moviedir, '/Volumes/Projects/Social Approach/', '/gpfs/projects/wehrlab/wehr/');
                 cd(talapasmoviedir)
                 d=dir('*labeled.mp4');
-                nasmovienamemp4=d(1).name;
-
-                nasmovienameavi=strrep(nasmovienamemp4, 'mp4', 'avi');
-%                 str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
-%                 eval(str)
+                movienamemp4=d(end).name;
+                movienameavi=strrep(nasmovienamemp4, 'mp4', 'avi');
+                %                 str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
+                %                 eval(str)
                 [~,moviename, ~]=fileparts(nasmovienamemp4);
                 str=sprintf('!ffmpeg -i %s.mp4 -vcodec mjpeg -q:v 1 -an %s.avi', moviename, moviename)
-                eval(str)
-                keyboard
+                if ~exist(nasmovienameavi)==2
+                    eval(str)
+                end
+                movie_filename=movienameavi;
+                
             else
                 cd(moviedir)
                 d=dir('*labeled.mp4');
