@@ -91,9 +91,10 @@ for k=1:pruned_num_states
                 fullmovie_filename=fullfile(moviedir, movie_filename);
             end
             v = VideoReader(fullmovie_filename);
-            if localstopframe>v.NumFrames
-                warning(sprintf('localstopframe is off from v.NumFrames by %d frames', localstopframe-v.NumFrames))
-                localstopframe=v.NumFrames; %
+            NumFrames=ceil(v.FrameRate*v.Duration);
+            if localstopframe>NumFrames
+                warning(sprintf('localstopframe is off from NumFrames by %d frames', localstopframe-NumFrames))
+                localstopframe=NumFrames; %
             end
             %         trim really long epochs to some max length e.g. 10 s
             if localstopframe-localstartframe > 10*v.FrameRate
