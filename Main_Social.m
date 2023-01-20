@@ -38,8 +38,8 @@ end
 %make a new output directory with today's date:
 %outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today));
 numstates=20;
-kappa='1e12';
-arlags=10;
+kappa='1e16';
+arlags=20;
 outputdir=sprintf('%s%sstate_epoch_clips-%s-%d-%s-%d',outputroot, filesep, datestr(today), numstates, kappa, arlags);
 
 %OR

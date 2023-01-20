@@ -12,7 +12,7 @@ num_states = 20    # number of discrete states
 observation_class = 'autoregressive'
 obs_dim = 12       # dimensionality of observation
 transitions = 'sticky'
-kappa = 1E14
+kappa = 1E16
 AR_lags =  20
 hmm = ssm.HMM(num_states, obs_dim,
               observations=observation_class, observation_kwargs={'lags':AR_lags},
