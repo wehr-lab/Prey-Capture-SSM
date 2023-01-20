@@ -71,6 +71,18 @@ for k=1:pruned_num_states
         if ~skipepoch
             cd(localmovieroot)
             cd(moviedir)
+            if contains(hostname, 'talapas')
+                keyboard
+                moviedir=rootdir;
+                cd(rootdir)
+                nasmovienamemp4=strrep(moviefilenames{fly}, 'Volumes', 'share');
+                nasmovienameavi=strrep(nasmovienamemp4, 'mp4', 'avi');
+                str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
+                eval(str)
+                [~,moviename, ~]=fileparts(nasmovienamemp4);
+                str=sprintf('!ffmpeg -i %s.mp4 -vcodec mjpeg -q:v 1 -an %s.avi', moviename, moviename)
+                eval(str)
+            end
             d=dir('*labeled.mp4');
             movie_filename=d(1).name;
             v = VideoReader(fullfile(moviedir, movie_filename));
