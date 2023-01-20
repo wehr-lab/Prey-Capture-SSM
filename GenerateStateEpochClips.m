@@ -70,21 +70,24 @@ for k=1:pruned_num_states
         end
         if ~skipepoch
             cd(localmovieroot)
-            cd(moviedir)
             if contains(hostname, 'talapas')
-                keyboard
-                moviedir=rootdir;
-                cd(rootdir)
-                nasmovienamemp4=strrep(moviefilenames{fly}, 'Volumes', 'share');
+                talapasmoviedir=strrep(moviedir, '/Volumes/Projects/Social Approach/', '/gpfs/projects/wehrlab/wehr/');
+                cd(talapasmoviedir)
+                d=dir('*labeled.mp4');
+                nasmovienamemp4=d(1).name;
+
                 nasmovienameavi=strrep(nasmovienamemp4, 'mp4', 'avi');
-                str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
-                eval(str)
+%                 str=sprintf('!scp wehftar@wehr-nas.uoregon.edu:%s .', nasmovienamemp4);
+%                 eval(str)
                 [~,moviename, ~]=fileparts(nasmovienamemp4);
                 str=sprintf('!ffmpeg -i %s.mp4 -vcodec mjpeg -q:v 1 -an %s.avi', moviename, moviename)
                 eval(str)
+                keyboard
+            else
+                cd(moviedir)
+                d=dir('*labeled.mp4');
+                movie_filename=d(1).name;
             end
-            d=dir('*labeled.mp4');
-            movie_filename=d(1).name;
             v = VideoReader(fullfile(moviedir, movie_filename));
             if localstopframe>v.NumFrames
                 warning(sprintf('localstopframe is off from v.NumFrames by %d frames', localstopframe-v.NumFrames))
