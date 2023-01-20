@@ -83,7 +83,7 @@ toc
 
 
 %make a grey dummy frame of the right size
-d=dir('ssm_state_epoch_clip*.mp4');
+d=dir(sprintf('ssm_state_epoch_clip*.%s', ext);
 movie_filename=fullfile(outputdir, d(1).name);
 vobj=VideoReader(movie_filename);
 dummy= read(vobj, 1);
