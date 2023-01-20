@@ -1,4 +1,5 @@
 function GenerateStateEpochClips(outputdir1, localmovieroot)
+fprintf('\n%s',mfilename)
 % slice source videos into video clips for each state and epoch (up to some
 % max num epochs)
 %
