@@ -110,7 +110,7 @@ for k=1:pruned_num_states
             end
             out_movie_filename=sprintf('ssm_state_epoch_clip-%d-%d', k, e);
             out_movie_fullfilename=fullfile(outputdir, out_movie_filename);
-            vout = VideoWriter(out_movie_fullfilename, 'MPEG-4');
+            vout = VideoWriter(out_movie_fullfilename); %, 'MPEG-4');
             open(vout)
             writeVideo(vout,vidFrames)
             close(vout)
