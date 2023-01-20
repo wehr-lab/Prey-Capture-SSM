@@ -83,13 +83,14 @@ for k=1:pruned_num_states
                     eval(str)
                 end
                 movie_filename=movienameavi;
-                
+                fullmovie_filename=fullfile(talapasmoviedir, movie_filename);                
             else
                 cd(moviedir)
                 d=dir('*labeled.mp4');
                 movie_filename=d(1).name;
+                fullmovie_filename=fullfile(moviedir, movie_filename);
             end
-            v = VideoReader(fullfile(moviedir, movie_filename));
+            v = VideoReader(fullmovie_filename);
             if localstopframe>v.NumFrames
                 warning(sprintf('localstopframe is off from v.NumFrames by %d frames', localstopframe-v.NumFrames))
                 localstopframe=v.NumFrames; %
