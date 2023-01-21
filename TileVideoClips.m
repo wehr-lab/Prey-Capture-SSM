@@ -135,7 +135,10 @@ switch arraysize
                             vidFrame = readFrame(v{ei}) ;
                         else
                             %vidFrame=dummy;
-                            vidFrame = read(v{ei},1) ;
+                            %we reached the end, so rewind and start over
+                            v{ei}.CurrentTime=0;
+                            vidFrame = readFrame(v{ei}) ;
+                            %vidFrame = read(v{ei},1) ;
                         end
                     end
                     [h,w,c]=size(vidFrame);
@@ -199,8 +202,10 @@ switch arraysize
                         if hasFrame(v{ei})
                             vidFrame = readFrame(v{ei}) ;
                         else
-                            %vidFrame=dummy;
-                            vidFrame = read(v{ei},1) ;
+                            %we reached the end, so rewind and start over
+                            v{ei}.CurrentTime=0;
+                            vidFrame = readFrame(v{ei}) ;
+                            %vidFrame = read(v{ei},1) ;
                         end
                     end
                     [h,w,c]=size(vidFrame);
@@ -278,8 +283,10 @@ switch arraysize
                         if hasFrame(v{ei})
                             vidFrame = readFrame(v{ei}) ;
                         else
-                            %vidFrame=dummy;
-                            vidFrame = read(v{ei},1) ;
+                            %we reached the end, so rewind and start over
+                            v{ei}.CurrentTime=0;
+                            vidFrame = readFrame(v{ei}) ;
+                            %vidFrame = read(v{ei},1) ;
                         end
                     end
                     [h,w,c]=size(vidFrame);
@@ -375,8 +382,10 @@ switch arraysize
                         if hasFrame(v{ei})
                             vidFrame = readFrame(v{ei}) ;
                         else
-                            %vidFrame=dummy;
-                            vidFrame = read(v{ei},1) ;
+                            %we reached the end, so rewind and start over
+                            v{ei}.CurrentTime=0;
+                            vidFrame = readFrame(v{ei}) ;
+                            %vidFrame = read(v{ei},1) ;
                         end
                     end
                     [h,w,c]=size(vidFrame);

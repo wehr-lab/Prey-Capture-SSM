@@ -5,6 +5,7 @@ psfilename='figs.ps';
 cd(outputdir) %absolute
 figs=findobj('type', 'figure');
 figs=fliplr(figs');
+figs=sort(figs);
 fprintf('\nfigs: ');
 fprintf(' %d', figs.Number);
 
