@@ -18,6 +18,7 @@ if nargin==0,
     outputdir=dirlistpath;
 end
 cd(dirlistpath)
+fprintf('opening dirlist %s', DirList)
 fid=fopen(DirList);
 i=0;
 while 1 %processes until end of file is reached, then breaks
@@ -45,6 +46,20 @@ while 1 %processes until end of file is reached, then breaks
         groupdata(i)=geo;
         numframes=geo.numframes;
         %mouse speed
+        if length(geo.speed1)<numframes
+            tmp=zeros(numframes,1);
+            tmp(1:length(geo.speed1))=geo.speed1;
+            geo.speed1=tmp;
+        elseif length(geo.speed1)>numframes
+            geo.speed1=geo.speed1(1:numframes);
+        end
+          if length(geo.speed2)<numframes
+            tmp=zeros(numframes,1);
+            tmp(1:length(geo.speed2))=geo.speed2;
+            geo.speed2=tmp;
+        elseif length(geo.speed2)>numframes
+            geo.speed2=geo.speed2(1:numframes);
+        end
         startidx=size(X,1)+1;
         X(startidx:startidx-1+numframes, 1)= geo.speed1;
         X(startidx:startidx-1+numframes, 2)= geo.speed2;
@@ -62,6 +77,20 @@ while 1 %processes until end of file is reached, then breaks
         for k=startidx:startidx-1+numframes %kind of clunky, is it worth it?
             datadirs_by_frame{k}=datadir;
         end
+
+        tracks(startidx:startidx-1+numframes, 1)= geo.smbodyCOM1x;
+        tracks(startidx:startidx-1+numframes, 2)= geo.smbodyCOM1y;
+        tracks(startidx:startidx-1+numframes, 3)= geo.smbodyCOM2x;
+        tracks(startidx:startidx-1+numframes, 4)= geo.smbodyCOM2y;
+        tracks(startidx:startidx-1+numframes, 5)= geo.smheadbase1x;
+        tracks(startidx:startidx-1+numframes, 6)= geo.smheadbase1y;
+        tracks(startidx:startidx-1+numframes, 7)= geo.smheadbase2x;
+        tracks(startidx:startidx-1+numframes, 8)= geo.smheadbase2y;
+        tracks(startidx:startidx-1+numframes, 9)= geo.smnose1x;
+        tracks(startidx:startidx-1+numframes, 10)= geo.smnose1y;
+        tracks(startidx:startidx-1+numframes, 11)= geo.smnose2x;
+        tracks(startidx:startidx-1+numframes, 12)= geo.smnose2y;
+
         
     end
 end
@@ -82,6 +111,19 @@ X_description{11}='mouse1_thigmo';
 X_description{12}='mouse2_thigmo';
 
 X=real(X);
+
+        tracks_description{1}='smbodyCOM1x';
+        tracks_description{2}='smbodyCOM1y';
+        tracks_description{3}='smbodyCOM2x';
+        tracks_description{4}='smbodyCOM2y';
+        tracks_description{5}='smheadbase1x';
+        tracks_description{6}='smheadbase1y';
+        tracks_description{7}='smheadbase2x';
+        tracks_description{8}='smheadbase2y';
+        tracks_description{9}='smnose1x';
+        tracks_description{10}='smnose1y';
+        tracks_description{11}='smnose2x';
+        tracks_description{12}='smnose2y';
 
 %normalize by z-score
 rawX=X;
@@ -112,6 +154,6 @@ generated_by=mfilename;
 framerate=geo.framerate;
 save training_data X rawX X_description run_on DirList datadirs ...
     groupdata outputdir localframenum datadirs_by_frame ...
-    decX decimate_factor undecX framerate
+    decX decimate_factor undecX framerate tracks tracks_description
 fprintf('\nsaved observations to file training_data.mat in %s', outputdir)
 

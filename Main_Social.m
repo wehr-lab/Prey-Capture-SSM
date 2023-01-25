@@ -24,7 +24,7 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         %output directory for results and generated video clips
         outputroot=    '/Volumes/Projects/Social Approach/save_OEablationSocial';
         %local path to python3
-        pypath='/usr/local/bin/python3';
+        pypath='python';
         activate_venv_cmd='source ~/virtualenvironment/ssmenv/bin/activate'
     otherwise
         fprintf('don''t recognize computer %s', java.net.InetAddress.getLocalHost.getHostName)
@@ -37,9 +37,9 @@ end
     
 %make a new output directory with today's date:
 %outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today));
-numstates=20;
-kappa='1e16';
-arlags=20;
+numstates=5;
+kappa='1e12';
+arlags=5;
 outputdir=sprintf('%s%sstate_epoch_clips-%s-%d-%s-%d',outputroot, filesep, datestr(today), numstates, kappa, arlags);
 
 %OR
@@ -50,7 +50,7 @@ fprintf('outputdir: %s',outputdir);
 
 cd(outputroot)
 mkdir(outputdir)
-cd(outputdir)
+ cd(outputdir)
 % [DirL     ist, dirlistpath] = uigetfile('*.txt', 'select DirList of data directories to scan');
 % if isequal(DirList,0) || isequal(dirlistpath,0)
 %     fprintf('\ncancelled')
@@ -58,7 +58,7 @@ cd(outputdir)
 % end
 
 
-% % ConvertSocialGeometryToObservations(DirList, outputdir)
+ ConvertSocialGeometryToObservations(DirList, outputroot, outputdir)
 % % 
 [repositorydir,~,~]=fileparts(which(mfilename));
 ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');

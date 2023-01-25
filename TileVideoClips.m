@@ -13,6 +13,7 @@ if contains(char(getHostName(java.net.InetAddress.getLocalHost)), 'talapas')
 else
     ext='mp4';
 end
+     ext='avi'
 
 cd(outputdir)
 
@@ -483,12 +484,12 @@ tic
 fprintf('\ngenerating monolithic composite...')
 
 out_movie_filename_mono=fullfile(outputdir, sprintf('all_states_comp%s.mp4', arraysize));
-vout = VideoWriter(out_movie_filename_mono, 'MPEG-4');
+vout = VideoWriter(out_movie_filename_mono);
 td=load ('training_data');
 vout.FrameRate=td.framerate;
 open(vout);
 for k=[1:num_states]
-    in_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));
+    in_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.%s', k, ext));
     if exist(in_movie_filename)==2
         vin = VideoReader(in_movie_filename);
         fprintf('\nk %d:', k)
@@ -499,12 +500,12 @@ for k=[1:num_states]
             nbytes=fprintf(' %d/10', i);
             vin.CurrentTime=0;
             if fc<1000 %5 second time limit
-            for f=1:vin.NumFrames
+            for f=1: ceil(vin.FrameRate*vobj.Duration)
                 fc=fc+1;
                 vidFrame = readFrame(vin) ;
                 str=sprintf('loop %d',i);
                 vidFrame = insertText(vidFrame,[20,125],str,...
-                    'FontSize',48,'Font', 'Arial', 'BoxColor', 'g',  ...
+                    'FontSize',48, 'BoxColor', 'g',  ...
                     'BoxOpacity',0.0,'TextColor','red');
                 vidFrame=imresize(vidFrame, .25);
                 writeVideo(vout,vidFrame)
@@ -520,14 +521,14 @@ close(vout)
 load ('training_data.mat', 'framerate') 
 if framerate>199
     fps=30; %desired fps
-    newmoviefilename=replace(out_movie_filename_mono, '.mp4', sprintf('-%dfps.mp4', fps));
+    newmoviefilename=replace(out_movie_filename_mono, '.', sprintf('-%dfps.', fps));
     str=sprintf('!/usr/local/bin/ffmpeg  -i "%s" -r %d "%s"', out_movie_filename_mono, fps, newmoviefilename);
     eval(str)
 
     %do the same for the single state comp vids
 for k=[1:num_states]
-    movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.mp4', k));
-    newmoviefilename=replace(movie_filename, '.mp4', sprintf('-%dfps.mp4', fps));
+    movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d.%s', k, ext));
+    newmoviefilename=replace(movie_filename, '.', sprintf('-%dfps.', fps));
     str=sprintf('!/usr/local/bin/ffmpeg  -i "%s" -r %d "%s"', movie_filename, fps, newmoviefilename);
     eval(str)
 end

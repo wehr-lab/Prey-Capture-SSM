@@ -3,14 +3,19 @@
 
 %might have to load Prefs/keyboard/windows default set each time
 
-local_movie_root='/gpfs/projects/wehrlab/wehr/save_OEablationSocial';
-cd '/gpfs/projects/wehrlab/wehr/save_OEablationSocial/state_epoch_clips-19-Jan-2023-20-1e14-20'
+%local_movie_root='/gpfs/projects/wehrlab/wehr/save_OEablationSocial';
+local_movie_root='/Volumes/Projects/Social Approach/save_OEablationSocial';
+
+% cd '/gpfs/projects/wehrlab/wehr/save_OEablationSocial/state_epoch_clips-19-Jan-2023-20-1e14-20'
+cd    '/Volumes/Projects/Social Approach/save_OEablationSocial/state_epoch_clips-23-Jan-2023-5-1e12-5'
+
+    
 
 
 %cd into target directory first. then:
 outputdir=pwd;
 
-if 1
+if 0
     PlotPosteriorProbs(outputdir)
     PrintFigs(outputdir)
     PruneTPM(outputdir)
