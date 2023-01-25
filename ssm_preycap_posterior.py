@@ -8,12 +8,12 @@ import os
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
-num_states = 5    # number of discrete states
+num_states = 10    # number of discrete states
 observation_class = 'autoregressive'
-obs_dim = 12       # dimensionality of observation
+obs_dim = 5       # dimensionality of observation
 transitions = 'sticky'
-kappa = 1E12
-AR_lags =  5
+kappa = 1E6
+AR_lags =  1
 hmm = ssm.HMM(num_states, obs_dim,
               observations=observation_class, observation_kwargs={'lags':AR_lags},
               transitions=transitions, transition_kwargs={'kappa': kappa})
@@ -25,7 +25,7 @@ mat=io.loadmat('training_data.mat')
 X = mat['X']
 
 #fit hmm to data
-N_iters=10;
+N_iters=5;
 #N_iters=10
 hmm_lls = hmm.fit(X, method="em", num_iters=N_iters)
 Z = hmm.most_likely_states(X)

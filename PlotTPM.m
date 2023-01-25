@@ -26,6 +26,33 @@ hist(durs, 100)
 xlabel('post-pruning epoch duration');ylabel('count')
 
 figure
+for  k=1:pruned_num_states
+epoch_occupancy(k)=pruned_epochs(k).num_epochs;
+frame_occupancy(k)=sum(pruned_epochs(k).numframes);
+median_epoch_duration(k)=median(pruned_epochs(k).numframes);
+end
+
+figure
+subplot(1,3,1)
+bar(epoch_occupancy)
+xticks(1:pruned_num_states)
+xlabel('state')
+ylabel('num epochs')
+title('epoch occupancy')
+subplot(1,3,2)
+bar(frame_occupancy)
+xticks(1:pruned_num_states)
+xlabel('state')
+ylabel('num frames')
+title('frame occupancy')
+subplot(133)
+bar(1000*median_epoch_duration/framerate)
+xticks(1:pruned_num_states)
+xlabel('state')
+ylabel('median epoch duration, ms')
+title('median epoch duration')
+
+figure
 imagesc(tpm)
 % caxis([0 .2])
 axis square

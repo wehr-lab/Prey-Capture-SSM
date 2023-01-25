@@ -7,7 +7,7 @@
 local_movie_root='/Volumes/Projects/Social Approach/save_OEablationSocial';
 
 % cd '/gpfs/projects/wehrlab/wehr/save_OEablationSocial/state_epoch_clips-19-Jan-2023-20-1e14-20'
-cd    '/Volumes/Projects/Social Approach/save_OEablationSocial/state_epoch_clips-23-Jan-2023-5-1e12-5'
+cd      '/Volumes/Projects/Social Approach/save_OEablationSocial/state_epoch_clips-24-Jan-2023-10-1e12-5'
 
     
 
@@ -15,7 +15,8 @@ cd    '/Volumes/Projects/Social Approach/save_OEablationSocial/state_epoch_clips
 %cd into target directory first. then:
 outputdir=pwd;
 
-if 0
+if 1
+    delete figs.ps
     PlotPosteriorProbs(outputdir)
     PrintFigs(outputdir)
     PruneTPM(outputdir)

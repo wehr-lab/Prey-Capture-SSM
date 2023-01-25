@@ -37,9 +37,9 @@ end
     
 %make a new output directory with today's date:
 %outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today));
-numstates=5;
-kappa='1e12';
-arlags=5;
+numstates=10;
+kappa='1e6';
+arlags=1;
 outputdir=sprintf('%s%sstate_epoch_clips-%s-%d-%s-%d',outputroot, filesep, datestr(today), numstates, kappa, arlags);
 
 %OR
@@ -59,7 +59,10 @@ mkdir(outputdir)
 
 
  ConvertSocialGeometryToObservations(DirList, outputroot, outputdir)
-% % 
+observation_subset(outputdir); %choose a subset of observations
+
+% %
+
 [repositorydir,~,~]=fileparts(which(mfilename));
 ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
 
@@ -94,6 +97,9 @@ PlotTPM(outputdir)
 PrintFigs(outputdir)
 PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
 PrintFigs(outputdir)
+PlotStateTracksSocial(outputdir)
+PrintFigs(outputdir)
+
 
 %GenerateStateEpochClips(outputdir, local_movie_root)
 %TileVideoClips(outputdir)

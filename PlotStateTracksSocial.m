@@ -33,22 +33,33 @@ for k=1:pruned_num_states
         absstopframe=pruned_epochs(k).stops(e);
 
 
-        landframe=1; %e.g. Land doesn't even exist for social videos
         absframes=absstartframe:absstopframe;
         if absstopframe<length(tracks) %shouldn't have to do this...
             m1x=tracks(absframes,1); %x,y position tracks of each mouse
             m1y=tracks(absframes,2);
             m2x=tracks(absframes,3);
             m2y=tracks(absframes,4);
-            m1s=rawX(absframes,1); %mouse 1 speed
-            m2s=rawX(absframes,2); %mouse 1 speed
-            r=rawX(absframes,3); %range
-            m1az=rawX(absframes,5); %mouse 1 azimuth
-            m2az=rawX(absframes,6); %mouse 2 azimuth
-            m1v0=rawX(absframes,7); %mouse 1 velocity 0 towards mouse2
-            m2v0=rawX(absframes,9); %mouse 2 velocity 0 towards mouse1
-            m1thig=rawX(absframes,11); %mouse 1 velocity 0 towards mouse2
-            m2thig=rawX(absframes,12); %mouse 2 velocity 0 towards mouse1
+%             m1s=rawX(absframes,1); %mouse 1 speed
+%             m2s=rawX(absframes,2); %mouse 1 speed
+%             r=rawX(absframes,3); %range
+%             m1az=rawX(absframes,5); %mouse 1 azimuth
+%             m2az=rawX(absframes,6); %mouse 2 azimuth
+%             m1v0=rawX(absframes,7); %mouse 1 velocity 0 towards mouse2
+%             m2v0=rawX(absframes,9); %mouse 2 velocity 0 towards mouse1
+%             m1thig=rawX(absframes,11); %mouse 1 velocity 0 towards mouse2
+%             m2thig=rawX(absframes,12); %mouse 2 velocity 0 towards mouse1
+
+%hard-coding subsets of observations
+m1s=[];
+m2s=[];
+r=rawX(absframes,1); %range
+m1az=rawX(absframes,2); %mouse 1 azimuth
+m2az=rawX(absframes,3); %mouse 2 azimuth
+m1v0=rawX(absframes,4);
+m2v0=rawX(absframes,5);
+m1thig=[];
+m2thig=[];
+
 
 
             %         align to m1(1)
