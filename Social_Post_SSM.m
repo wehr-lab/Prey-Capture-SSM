@@ -5,7 +5,7 @@ function Social_Post_SSM(outputdir)
 % names as absolute paths
 
 local_movie_root = '/home/wehr/wehrlab/save_OEablationSocial';
-
+copyfile('../training_data.mat', '.')
 
 cd(outputdir)
 
