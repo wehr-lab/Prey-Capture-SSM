@@ -5,7 +5,9 @@ function Social_Post_SSM(outputdir)
 % names as absolute paths
 
 local_movie_root = '/home/wehr/wehrlab/save_OEablationSocial';
-copyfile('../training_data.mat', '.')
+cd /home/wehr/wehrlab/save_OEablationSocial/param_search
+
+copyfile('training_data.mat', outputdir)
 
 cd(outputdir)
 
