@@ -39,34 +39,23 @@ for k=1:pruned_num_states
             m1y=tracks(absframes,2);
             m2x=tracks(absframes,3);
             m2y=tracks(absframes,4);
-%             m1s=rawX(absframes,1); %mouse 1 speed
-%             m2s=rawX(absframes,2); %mouse 1 speed
-%             r=rawX(absframes,3); %range
-%             m1az=rawX(absframes,5); %mouse 1 azimuth
-%             m2az=rawX(absframes,6); %mouse 2 azimuth
-%             m1v0=rawX(absframes,7); %mouse 1 velocity 0 towards mouse2
-%             m2v0=rawX(absframes,9); %mouse 2 velocity 0 towards mouse1
-%             m1thig=rawX(absframes,11); %mouse 1 velocity 0 towards mouse2
-%             m2thig=rawX(absframes,12); %mouse 2 velocity 0 towards mouse1
-
-%hard-coding subsets of observations
-m1s=[];
-m2s=[];
-r=rawX(absframes,1); %range
-m1az=rawX(absframes,2); %mouse 1 azimuth
-m2az=rawX(absframes,3); %mouse 2 azimuth
-m1v0=rawX(absframes,4);
-m2v0=rawX(absframes,5);
-m1thig=[];
-m2thig=[];
-
-
+            m1s=fullrawX(absframes,1); %mouse 1 speed
+            m2s=fullrawX(absframes,2); %mouse 1 speed
+            r=fullrawX(absframes,3); %range
+            m1az=fullrawX(absframes,5); %mouse 1 azimuth
+            m2az=fullrawX(absframes,6); %mouse 2 azimuth
+            m1v0=fullrawX(absframes,7); %mouse 1 velocity 0 towards mouse2
+            m2v0=fullrawX(absframes,9); %mouse 2 velocity 0 towards mouse1
+            m1thig=fullrawX(absframes,11); %mouse 1 velocity 0 towards mouse2
+            m2thig=fullrawX(absframes,12); %mouse 2 velocity 0 towards mouse1
 
             %         align to m1(1)
-            m1x=m1x-m1x(1);
-            m1y=m1y-m1y(1);
-            m2x=m2x-m1x(1);
-            m2y=m2y-m1y(1);
+            m1x_0=m1x(1);
+            m1y_0=m1y(1);
+            m1x=m1x-m1x_0;
+            m1y=m1y-m1y_0;
+            m2x=m2x-m1x_0;
+            m2y=m2y-m1y_0;
 
             %rotate to align to m1 heading direction
             theta=atan2d(m1y(end), m1x(end));
@@ -80,6 +69,12 @@ m2thig=[];
             m2r=m2*R;
             m2rx=m2r(:,1);
             m2ry=m2r(:,2);
+
+%             %test non-rotation control
+%             m1rx=m1x;
+%             m1ry=m1y;
+%             m2rx=m2x;
+%             m2ry=m2y;
 
             %accumulate so we can compute some averages
             Mm1rx{e}=m1rx;

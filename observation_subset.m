@@ -7,10 +7,11 @@ pwd
 h=warndlg('you are about to overwrite training_data.mat, are you sure?' ,'overwrite?');
 waitfor(h)
 
-subset_idx=[3 5 6 7 9];
+subset_idx=[3 4 5 6 ];
 
 load training_data
 save training_data_bak
+fullrawX=rawX; %save original alongside the subset in training_data so we can plot tracks with it
 
 % save training_data X rawX X_description run_on DirList datadirs ...
 %     groupdata outputdir localframenum datadirs_by_frame ...

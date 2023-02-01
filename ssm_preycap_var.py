@@ -9,15 +9,18 @@ import time
 import os
 import sys
 
-num_states=(sys.argv[1])
-#kappa=(sys.argv[2])
-AR_lags=(sys.argv[2])
+num_states=int(sys.argv[1])
+kappa=int(sys.argv[2])
+AR_lags=int(sys.argv[3])
 print('num_states: ')
 print(num_states)
-#print('kappa: ')
-#print(kappa)
+print(type(num_states))
+print('kappa: ')
+print(kappa)
+print(type(kappa))
 print('AR lags: ')
 print(AR_lags)
+print(type(AR_lags))
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
@@ -25,10 +28,10 @@ print(AR_lags)
 observation_class = 'autoregressive'
 obs_dim = 12       # dimensionality of observation
 transitions = 'sticky'
-kappa = 1E12
+#kappa = 1E12
 #AR_lags =  10
 hmm = ssm.HMM(num_states, obs_dim,
-              observations=observation_class, observation_kwargs={'lags':AR_lags},
+              observations=observation_class, observation_kwargs={'lags': AR_lags},
               transitions=transitions, transition_kwargs={'kappa': kappa})
 print([num_states, kappa, AR_lags])
 

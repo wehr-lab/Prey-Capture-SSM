@@ -18,7 +18,7 @@ for i=1:pruned_num_states
     for e=1:pruned_epochs(i).num_epochs
         frames=[frames starts(e):stops(e)];
     end
-    mean_obs(i,:)=mean(undecX(frames,:));
+    mean_obs(i,:)=median(undecX(frames,:));
     std_obs(i,:)=std(undecX(frames,:));
 
 %     %Add in Azimuth
@@ -35,8 +35,10 @@ mean_obs=mean_obs'; %flip
 
 % normalize to the range 0,1
 for j=1: obs_dim
-    tmp=mean_obs(j,:) - min(mean_obs(j,:)); %make positive
-    nmean_obs(j,:)=tmp./max(tmp); %normalize
+    tmp=mean_obs(j,:) - mean(mean_obs(j,:)); %zero center
+    nmean_obs(j,:)=tmp./std(tmp); %zscore
+%    tmp=mean_obs(j,:) - min(mean_obs(j,:)); %make positive
+%    nmean_obs(j,:)=tmp./max(tmp); %normalize
 end
 
 figure
@@ -76,6 +78,10 @@ set(gca, 'xtick', 1:obs_dim);
 set(gca, 'xticklabel', X_description);
 set(gca, 'xtick',1:pruned_num_states,  'xticklabel', outperm)
 title('EPM, normalized and clustered')
+try colormap turbo
+catch colormap jet
+end
+colorbar
 
 figure
 imagesc(mean_obs(:,outperm))
