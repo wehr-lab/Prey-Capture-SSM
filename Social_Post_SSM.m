@@ -4,6 +4,9 @@ function Social_Post_SSM(outputdir)
 % designed to run on talapas from a batch script that passes directory
 % names as absolute paths
 
+fprintf('\nSocial_Post_SSM %s',outputdir)
+
+
 %talapas specific
 addpath /home/wehr/wehrlab/Prey-Capture-SSM
 local_movie_root = '/home/wehr/wehrlab/save_OEablationSocial';
