@@ -107,7 +107,7 @@ yl=ylim;
 for k=1:K
     pp=post_probs(:,k)';
     xs=find(pp>.8);
-    if !isempty(xs)
+    if ~isempty(xs)
         dxs=diff(xs);
         stopsi=find(dxs>1);
         stops=xs([stopsi end]);
