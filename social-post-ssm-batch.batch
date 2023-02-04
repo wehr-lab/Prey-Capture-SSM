@@ -22,7 +22,7 @@ directory_list=()
 for direct in /home/wehr/wehrlab/save_OEablationSocial/param_search/*
 do
 echo $direct
-dirctory_list+=("$direct")
+directory_list+=("$direct")
 done
 echo "Running array job ${SLURM_ARRAY_TASK_ID} directory on ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
 
