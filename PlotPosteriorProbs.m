@@ -107,25 +107,27 @@ yl=ylim;
 for k=1:K
     pp=post_probs(:,k)';
     xs=find(pp>.8);
-    dxs=diff(xs);
-    stopsi=find(dxs>1);
-    stops=xs([stopsi end]);
-    startsi=[1 stopsi+1];
-    starts=xs(startsi);
-    %     starts=starts(1:end-1);
-    num_epochs(k)=length(starts);
-    epochs(k).starts=starts; %start frame of each epoch
-    epochs(k).stops=stops;
-    epochs(k).num_epochs=length(starts);
-    epochs(k).numframes= 1+stops-starts; %number of frames in each epoch
-    epochs(k).total_numframes=sum(epochs(k).numframes); %total frames across all epochs of this state
-    
-    
-    for i=1:length(starts)
-        c=colors(k,:);
-        x=starts(i):stops(i);
-        x=x/(framerate/decimate_factor);
-        jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
+    if !isempty(xs)
+        dxs=diff(xs);
+        stopsi=find(dxs>1);
+        stops=xs([stopsi end]);
+        startsi=[1 stopsi+1];
+        starts=xs(startsi);
+        %     starts=starts(1:end-1);
+        num_epochs(k)=length(starts);
+        epochs(k).starts=starts; %start frame of each epoch
+        epochs(k).stops=stops;
+        epochs(k).num_epochs=length(starts);
+        epochs(k).numframes= 1+stops-starts; %number of frames in each epoch
+        epochs(k).total_numframes=sum(epochs(k).numframes); %total frames across all epochs of this state
+
+
+        for i=1:length(starts)
+            c=colors(k,:);
+            x=starts(i):stops(i);
+            x=x/(framerate/decimate_factor);
+            jbfill(x,0*x+yl(1),0*x+yl(2),c,c,1,.1);
+        end
     end
 end
 set(gcf, 'pos',[82 1568 1581 420])
