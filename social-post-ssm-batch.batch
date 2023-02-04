@@ -13,6 +13,7 @@
 #SBATCH --array=0-50
 
 module load matlab
+echo "batch"
 
 cd /home/wehr/wehrlab/Prey-Capture-SSM
 
@@ -20,7 +21,7 @@ directory_list=()
 for direct in /home/wehr/wehrlab/save_OEablationSocial/param_search/*
 do
 echo $direct
-directory_list+=("$direct")
+dirctory_list+=("$direct")
 done
 echo "Running array job ${SLURM_ARRAY_TASK_ID} directory on ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
 
