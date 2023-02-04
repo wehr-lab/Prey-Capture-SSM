@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --account=wehrlab    ### change this to your actual account for charging
+#SBATCH --partition=gpu       ### queue to submit to
+#SBATCH --gpus=1              ### Number of gpus to use Use --gres=gpu:a100-40g:1 on preempt for new gpu
+#SBATCH --job-name=mike_Social_Post_SSM      ### job name
+#SBATCH --output=/projects/wehrlab/wehr/batchlogs/mike_job-%A_%a.out      ### file in which to store job stdout
+#SBATCH --error=/projects/wehrlab/mnardoci/batcherrors/mike_job-%A_%a.err       ### file in which to store job stderr
+#SBATCH --time=0-14:00:00              ### Wall clock time limit in Days-HH:MM:SS
+#SBATCH --mem=8G                ### memory limit per node, in GB
+#SBATCH --nodes=1               ### number of nodes to use
+#SBATCH --ntasks-per-node=1     ### number of tasks to launch per node
+#SBATCH --cpus-per-task=4      ### number of cores for each task
+#SBATCH --array=0-336
+
+module load matlab
+
+cd /home/wehr/wehrlab/Prey-Capture-SSM
+
+directory_list=()
+for direct in /home/wehr/wehrlab/save_OEablationSocial/param_search/*
+do
+echo $direct
+directory_list+=("$direct")
+done
+echo "Running array job ${SLURM_ARRAY_TASK_ID} directory on ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
+
+python /projects/wehrlab/shared/dlc_analyze.py "${directory_list[${SLURM_ARRAY_TASK_ID}]}"
+matlab -batch "Social_Post_SSM "${directory_list[${SLURM_ARRAY_TASK_ID}]}"
