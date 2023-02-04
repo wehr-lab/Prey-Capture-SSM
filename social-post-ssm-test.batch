@@ -10,7 +10,6 @@
 #SBATCH --nodes=1               ### number of nodes to use
 #SBATCH --ntasks-per-node=1     ### number of tasks to launch per node
 #SBATCH --cpus-per-task=4      ### number of cores for each task
-#SBATCH --array=0-336
 
 module load matlab
 
