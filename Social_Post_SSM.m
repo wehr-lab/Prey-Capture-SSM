@@ -40,7 +40,7 @@ PlotTPM(outputdir)
 PrintFigs(outputdir)
 PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
 PrintFigs(outputdir)
-PlotStateTracksSocial(outputdir)
+PlotStateTracksSocial_2018(outputdir)
 PrintFigs(outputdir)
 
 
