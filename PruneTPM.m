@@ -20,18 +20,20 @@ K=size(post_probs_undec, 2);
 for k=1:K
     pp=post_probs_undec(:,k)';
     xs=find(pp>.8);
-    dxs=diff(xs);
-    stopsi=find(dxs>1);
-    stops=xs([stopsi end]);
-    startsi=[1 stopsi+1];
-    starts=xs(startsi);
-    %     starts=starts(1:end-1);
-    num_epochs(k)=length(starts);
-    epochs(k).starts=starts; %start frame of each epoch
-    epochs(k).stops=stops;
-    epochs(k).num_epochs=length(starts);
-    epochs(k).numframes= 1+stops-starts; %number of frames in each epoch
-    epochs(k).total_numframes=sum(epochs(k).numframes); %total frames across all epochs of this state
+    if ~isempty(xs)
+        dxs=diff(xs);
+        stopsi=find(dxs>1);
+        stops=xs([stopsi end]);
+        startsi=[1 stopsi+1];
+        starts=xs(startsi);
+        %     starts=starts(1:end-1);
+        num_epochs(k)=length(starts);
+        epochs(k).starts=starts; %start frame of each epoch
+        epochs(k).stops=stops;
+        epochs(k).num_epochs=length(starts);
+        epochs(k).numframes= 1+stops-starts; %number of frames in each epoch
+        epochs(k).total_numframes=sum(epochs(k).numframes); %total frames across all epochs of this state
+    end
 end
 
 %prune away states with very low total occupancy
