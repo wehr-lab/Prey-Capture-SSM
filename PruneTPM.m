@@ -33,6 +33,8 @@ for k=1:K
         epochs(k).num_epochs=length(starts);
         epochs(k).numframes= 1+stops-starts; %number of frames in each epoch
         epochs(k).total_numframes=sum(epochs(k).numframes); %total frames across all epochs of this state
+    else
+        epochs(k).total_numframes=0;
     end
 end
 
