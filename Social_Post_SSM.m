@@ -4,8 +4,12 @@ function Social_Post_SSM(outputdir)
 % designed to run on talapas from a batch script that passes directory
 % names as absolute paths
 
+%talapas specific
+addpath /home/wehr/wehrlab/Prey-Capture-SSM
 local_movie_root = '/home/wehr/wehrlab/save_OEablationSocial';
 cd /home/wehr/wehrlab/save_OEablationSocial/param_search
+
+%mac
 %cd ("/Volumes/Projects/Social Approach/save_OEablationSocial/param_search")
 
 copyfile('training_data.mat', outputdir)
