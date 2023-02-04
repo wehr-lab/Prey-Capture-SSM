@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=wehr    ### change this to your actual account for charging
+#SBATCH --account=wehrlab    ### change this to your actual account for charging
 #SBATCH --partition=gpu       ### queue to submit to
 #SBATCH --gpus=1              ### Number of gpus to use Use --gres=gpu:a100-40g:1 on preempt for new gpu
 #SBATCH --job-name=mike_Social_Post_SSM      ### job name
@@ -24,5 +24,4 @@ directory_list+=("$direct")
 done
 echo "Running array job ${SLURM_ARRAY_TASK_ID} directory on ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
 
-python /projects/wehrlab/shared/dlc_analyze.py "${directory_list[${SLURM_ARRAY_TASK_ID}]}"
 matlab -batch "Social_Post_SSM "${directory_list[${SLURM_ARRAY_TASK_ID}]}"
