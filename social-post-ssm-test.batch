@@ -19,4 +19,4 @@ cd /home/wehr/wehrlab/Prey-Capture-SSM
 
 echo "test"
 
-matlab -batch "Social_Post_SSM "${directory_list[${SLURM_ARRAY_TASK_ID}]}"
+matlab -batch "Social_Post_SSM  /home/wehr/wehrlab/save_OEablationSocial/param_search/state-epoch-clips-2023-Jan-31-14-1e14-2"
