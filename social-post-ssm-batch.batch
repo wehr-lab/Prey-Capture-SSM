@@ -26,4 +26,4 @@ directory_list+=("$direct")
 done
 echo "Running array job ${SLURM_ARRAY_TASK_ID} directory on ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
 
-#matlab -batch "Social_Post_SSM ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
+matlab -batch "Social_Post_SSM ${directory_list[${SLURM_ARRAY_TASK_ID}]}"
