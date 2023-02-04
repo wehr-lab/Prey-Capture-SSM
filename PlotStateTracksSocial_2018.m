@@ -141,7 +141,7 @@ subplot(6,1,1);
     end
     xl=[0 median(pruned_epochs(k).numframes)];
     xlim(xl)
-    title(TL,sprintf('\nstate %d ', k ))
+    title(sprintf('\nstate %d ', k ))
     set(gcf, 'pos',[   100*k          10         560        1244])
 
     %        %compute and plot averages
