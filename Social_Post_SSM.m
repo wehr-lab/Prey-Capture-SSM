@@ -40,7 +40,6 @@ else
         transitions kappa AR_lags observation_class
 end
 
-fprintf('\nso....?')
 
 %do we have as many avis as we expect already?
 d=dir([outputdir, '*.avi']);
@@ -50,6 +49,8 @@ for k=1:pruned_num_states
         exp_num_avis=exp_num_avis+1;
     end
 end
+fprintf('\nfound %d avi files in this directory', length(d))
+
 if length(d)>=exp_num_avis
     fprintf('\nalready found %d avi files in this directory, not doing any additional video processing', length(d))
 else
