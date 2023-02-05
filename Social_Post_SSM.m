@@ -40,7 +40,7 @@ else
         transitions kappa AR_lags observation_class
 end
 
-
+fprintf('\nso....?')
 
 %do we have as many avis as we expect already?
 d=dir([outputdir, '*.avi']);
