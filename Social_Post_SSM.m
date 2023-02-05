@@ -43,7 +43,7 @@ end
 
 
 %do we have as many avis as we expect already?
-d=dir([outputdir, '*.avi']);
+d=dir([outputdir, '/*.avi']);
 exp_num_avis=0;
 for k=1:pruned_num_states
     for e=1:min(25, pruned_epochs(k).num_epochs)
