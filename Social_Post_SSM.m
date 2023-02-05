@@ -22,6 +22,7 @@ cd(outputdir)
 % since we decimated ConvertGeometryToObservations, now we un-decimate the Z returned by the hmm
 load ssm_posterior_probs
 td=load('training_data');
+load pruned_tpm.mat
 if exist('Zundec')==1
     fprintf('\nalready undecimated.')
 else
