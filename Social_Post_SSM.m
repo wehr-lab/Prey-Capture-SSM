@@ -40,15 +40,7 @@ else
         transitions kappa AR_lags observation_class
 end
 
-PlotPosteriorProbs(outputdir)
-PrintFigs(outputdir)
-PruneTPM(outputdir)
-PlotTPM(outputdir)
-PrintFigs(outputdir)
-PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
-PrintFigs(outputdir)
-PlotStateTracksSocial_2018(outputdir)
-PrintFigs(outputdir)
+
 
 %do we have as many avis as we expect already?
 d=dir([outputdir, '*.avi']);
@@ -62,6 +54,16 @@ if length(d)>=exp_num_avis
     fprintf('\nalready found %d avi files in this directory, not doing any additional video processing', length(d))
 else
     fprintf('\nonly found %d avi files in this directory, but expected at  least %d, proceeding with all video processing',  length(d), exp_num_avis)
+    
+    PlotPosteriorProbs(outputdir)
+    PrintFigs(outputdir)
+    PruneTPM(outputdir)
+    PlotTPM(outputdir)
+    PrintFigs(outputdir)
+    PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
+    PrintFigs(outputdir)
+    PlotStateTracksSocial_2018(outputdir)
+    PrintFigs(outputdir)
     
     GenerateStateEpochClips(outputdir, local_movie_root)
     TileVideoClips(outputdir)
