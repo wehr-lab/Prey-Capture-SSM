@@ -6,11 +6,11 @@
 #SBATCH --output=/projects/wehrlab/wehr/batchlogs/mike_job-%A_%a.out      ### file in which to store job stdout
 #SBATCH --error=/projects/wehrlab/wehr/batcherrors/mike_job-%A_%a.err       ### file in which to store job stderr
 #SBATCH --time=0-14:00:00              ### Wall clock time limit in Days-HH:MM:SS
-#SBATCH --mem=8G                ### memory limit per node, in GB
+#SBATCH --mem=32G                ### memory limit per node, in GB
 #SBATCH --nodes=1               ### number of nodes to use
 #SBATCH --ntasks-per-node=1     ### number of tasks to launch per node
 #SBATCH --cpus-per-task=4      ### number of cores for each task
-#SBATCH --array=0-50
+#SBATCH --array=0-336%50
 
 echo "starting batch job"
 
