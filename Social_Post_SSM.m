@@ -26,7 +26,6 @@ if exist('Zundec')==1
     fprintf('\nalready undecimated.')
 else
     fprintf('\nundecimating...')
-
     post_probs=Ps{1};
     j=0;
     for i=1:length(Z)
@@ -68,8 +67,6 @@ if length(d)>=exp_num_avis
     fprintf('\nalready found %d avi files in this directory, not doing any additional video processing', length(d))
 else
     fprintf('\nonly found %d avi files in this directory, but expected at  least %d, proceeding with all video processing',  length(d), exp_num_avis)
-
-
 
     GenerateStateEpochClips(outputdir, local_movie_root)
     TileVideoClips(outputdir)
