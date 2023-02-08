@@ -13,7 +13,7 @@ movieroot='/home/wehr/wehrlab/save_OEablationSocial/param_search'
 cd(movieroot)
 d=dir('state-epoch-clips-2023*');
 for i=1:length(d)
-d2=dir(sprintf('%s/ssm_state_vid-comp*', d(i).name);
+d2=dir(sprintf('%s/ssm_state_vid-comp*', d(i).name));
 for j=1:length(d2)
     
 moviefilename=d(2).name;
