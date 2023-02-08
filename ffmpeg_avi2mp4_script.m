@@ -16,7 +16,7 @@ for i=1:length(d)
     d2=dir(sprintf('%s/ssm_state_vid-comp*', d(i).name));
     for j=1:length(d2)
         
-        moviefilename=d2(j).name;
+        moviefilename=fullfile(d2(j).folder, d2(j).name);
         fps=30; %desired fps
         %targetdir='"/Users/wehr/Documents/Presentations/UCSC 2022/videos/"';
         newmoviefilename=replace(moviefilename, '.mp4', sprintf('-%dfps.mp4', fps));
