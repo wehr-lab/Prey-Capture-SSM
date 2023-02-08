@@ -23,11 +23,12 @@ for i=1:length(d)
         x5moviefilename=replace(moviefilename, '.mp4', sprintf('-%dfps5x.mp4', fps));
         
         %ffmpeg
-        str=sprintf('!/usr/local/bin/ffmpeg  -i %s -r %d %s', moviefilename, fps, newmoviefilename);
+        %str=sprintf('!/usr/local/bin/ffmpeg  -i %s -r %d %s', moviefilename, fps, newmoviefilename);
+        str=sprintf('!ffmpeg  -i %s -r %d %s', moviefilename, fps, newmoviefilename);
          eval(str)
         %fprintf('\n%s', str)
         
-        str=sprintf('!/usr/local/bin/ffmpeg  -i %s -filter:v "setpts=0.2*PTS" %s', newmoviefilename, x5moviefilename);
+        str=sprintf('!ffmpeg  -i %s -filter:v "setpts=0.2*PTS" %s', newmoviefilename, x5moviefilename);
         %eval(str)
         
         %move to new target dir
