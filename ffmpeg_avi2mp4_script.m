@@ -16,7 +16,7 @@ for i=1:length(d)
     d2=dir(sprintf('%s/ssm_state_vid-comp*', d(i).name));
     for j=1:length(d2)
         
-        moviefilename=d(2).name;
+        moviefilename=d2(j).name;
         fps=30; %desired fps
         %targetdir='"/Users/wehr/Documents/Presentations/UCSC 2022/videos/"';
         newmoviefilename=replace(moviefilename, '.mp4', sprintf('-%dfps.mp4', fps));
@@ -24,8 +24,8 @@ for i=1:length(d)
         
         %ffmpeg
         str=sprintf('!/usr/local/bin/ffmpeg  -i %s -r %d %s', moviefilename, fps, newmoviefilename);
-        % eval(str)
-        fprintf('\n%s', str)
+         eval(str)
+        %fprintf('\n%s', str)
         
         str=sprintf('!/usr/local/bin/ffmpeg  -i %s -filter:v "setpts=0.2*PTS" %s', newmoviefilename, x5moviefilename);
         %eval(str)
