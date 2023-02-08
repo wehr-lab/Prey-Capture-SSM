@@ -22,12 +22,10 @@ cd(outputdir)
 % since we decimated ConvertGeometryToObservations, now we un-decimate the Z returned by the hmm
 load ssm_posterior_probs
 td=load('training_data');
-load pruned_tpm.mat
 if exist('Zundec')==1
     fprintf('\nalready undecimated.')
 else
     fprintf('\nundecimating...')
-    
     post_probs=Ps{1};
     j=0;
     for i=1:length(Z)
@@ -41,6 +39,19 @@ else
         transitions kappa AR_lags observation_class
 end
 
+if exist('./pruned_tpm.mat', 'file')~=2
+    PlotPosteriorProbs(outputdir)
+    PrintFigs(outputdir)
+    PruneTPM(outputdir)
+    PlotTPM(outputdir)
+    PrintFigs(outputdir)
+    PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
+    PrintFigs(outputdir)
+    PlotStateTracksSocial_2018(outputdir) %talapas uses matlab r2018
+    PrintFigs(outputdir)
+end
+
+load pruned_tpm.mat
 
 %do we have as many avis as we expect already?
 d=dir([outputdir, '/*.avi']);
@@ -56,17 +67,7 @@ if length(d)>=exp_num_avis
     fprintf('\nalready found %d avi files in this directory, not doing any additional video processing', length(d))
 else
     fprintf('\nonly found %d avi files in this directory, but expected at  least %d, proceeding with all video processing',  length(d), exp_num_avis)
-    
-    PlotPosteriorProbs(outputdir)
-    PrintFigs(outputdir)
-    PruneTPM(outputdir)
-    PlotTPM(outputdir)
-    PrintFigs(outputdir)
-    PlotEPM_Social(outputdir) %I still need to change azimuths to sin/cosine and convert back to angles
-    PrintFigs(outputdir)
-    PlotStateTracksSocial_2018(outputdir)
-    PrintFigs(outputdir)
-    
+
     GenerateStateEpochClips(outputdir, local_movie_root)
     TileVideoClips(outputdir)
     %  LabelMovieStates(outputdir)
