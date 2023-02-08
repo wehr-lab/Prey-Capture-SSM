@@ -19,15 +19,15 @@ for i=1:length(d)
         moviefilename=fullfile(d2(j).folder, d2(j).name);
         fps=30; %desired fps
         %targetdir='"/Users/wehr/Documents/Presentations/UCSC 2022/videos/"';
-        newmoviefilename=replace(moviefilename, '.mp4', sprintf('-%dfps.mp4', fps));
+        newmoviefilename=replace(moviefilename, '.avi', sprintf('-%dfps.mp4', fps));
         x5moviefilename=replace(moviefilename, '.mp4', sprintf('-%dfps5x.mp4', fps));
         
         %ffmpeg
         %str=sprintf('!/usr/local/bin/ffmpeg  -i %s -r %d %s', moviefilename, fps, newmoviefilename);
         str=sprintf('!ffmpeg  -i %s -r %d %s', moviefilename, fps, newmoviefilename);
-         eval(str)
-        %fprintf('\n%s', str)
-        
+        fprintf('\n%s', str)
+        eval(str)
+                 
         str=sprintf('!ffmpeg  -i %s -filter:v "setpts=0.2*PTS" %s', newmoviefilename, x5moviefilename);
         %eval(str)
         
