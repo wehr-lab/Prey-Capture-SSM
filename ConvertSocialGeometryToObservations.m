@@ -65,14 +65,23 @@ while 1 %processes until end of file is reached, then breaks
         X(startidx:startidx-1+numframes, 2)= geo.speed2;
         X(startidx:startidx-1+numframes, 3)= geo.range;
         X(startidx:startidx-1+numframes, 4)= geo.drange;
-        X(startidx:startidx-1+numframes, 5)= geo.RelativeAzimuth1;
-        X(startidx:startidx-1+numframes, 6)= geo.RelativeAzimuth2;
-        X(startidx:startidx-1+numframes, 7)= geo.mouse1velocity0;
-        X(startidx:startidx-1+numframes, 8)= geo.mouse1velocity90;
-        X(startidx:startidx-1+numframes, 9)= geo.mouse2velocity0;
-        X(startidx:startidx-1+numframes, 10)= geo.mouse2velocity90;
-        X(startidx:startidx-1+numframes, 11)= geo.mouse1_thigmo;
-        X(startidx:startidx-1+numframes, 12)= geo.mouse2_thigmo;
+        X(startidx:startidx-1+numframes, 5)= (atanh(sind(geo.RelativeAzimuth1))).^(1/3); %Az is 0-180, same for left/right (9:00=3:00=90°)
+        %cos is in [-1, 1], so atanh(cosd(az)) is a zero-mean gaussian, which is good for HMM fitting
+        %but sin is [0, 1] because az is non-negative the way I computed it (see
+        %ConvertSocialDLCtoGeometry), there is no distinction between left/right, only towards/away,
+        %so atanh(sind(az)) is only the positive tail of the gaussian. To
+        %gaussianize I take the cube root, i.e. the Wilson-Hilferty transformation
+        %(https://www.rasch.org/rmt/rmt162g.htm) also (https://stats.stackexchange.com/questions/86135/is-it-possible-to-convert-a-rayleigh-distribution-into-a-gaussian-distribution)
+        %which I confirmed gaussianizes very nicely
+        X(startidx:startidx-1+numframes, 6)= atanh(cosd(geo.RelativeAzimuth1)); %Az is 0-180
+        X(startidx:startidx-1+numframes, 7)= (atanh(sind(geo.RelativeAzimuth2))).^(1/3);
+        X(startidx:startidx-1+numframes, 8)= atanh(cosd(geo.RelativeAzimuth2));
+        X(startidx:startidx-1+numframes, 9)= geo.mouse1velocity0;
+        X(startidx:startidx-1+numframes, 10)= geo.mouse1velocity90;
+        X(startidx:startidx-1+numframes, 11)= geo.mouse2velocity0;
+        X(startidx:startidx-1+numframes, 12)= geo.mouse2velocity90;
+        X(startidx:startidx-1+numframes, 13)= geo.mouse1_thigmo;
+        X(startidx:startidx-1+numframes, 14)= geo.mouse2_thigmo;
         localframenum(startidx:startidx-1+numframes)=1:numframes;
         for k=startidx:startidx-1+numframes %kind of clunky, is it worth it?
             datadirs_by_frame{k}=datadir;
@@ -101,14 +110,16 @@ X_description{1}='mouse1speed';
 X_description{2}='mouse2speed';
 X_description{3}='range';
 X_description{4}='drange';
-X_description{5}='RelativeAzimuth1';
-X_description{6}='RelativeAzimuth2';
-X_description{7}='mouse1velocity0';
-X_description{8}='mouse1velocity90';
-X_description{9}='mouse2velocity0';
-X_description{10}='mouse2velocity90';
-X_description{11}='mouse1_thigmo';
-X_description{12}='mouse2_thigmo';
+X_description{5}='sinRelativeAzimuth1';
+X_description{6}='cosRelativeAzimuth1';
+X_description{7}='sinRelativeAzimuth2';
+X_description{8}='cosRelativeAzimuth2';
+X_description{9}='mouse1velocity0';
+X_description{10}='mouse1velocity90';
+X_description{11}='mouse2velocity0';
+X_description{12}='mouse2velocity90';
+X_description{13}='mouse1_thigmo';
+X_description{14}='mouse2_thigmo';
 
 X=real(X);
 

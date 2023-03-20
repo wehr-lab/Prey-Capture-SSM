@@ -101,8 +101,8 @@ PlotStateTracksSocial(outputdir)
 PrintFigs(outputdir)
 
 
-%GenerateStateEpochClips(outputdir, local_movie_root)
-%TileVideoClips(outputdir)
+GenerateStateEpochClips(outputdir, local_movie_root)
+TileVideoClips(outputdir)
 % LabelMovieStates(outputdir)
 %PlotStatePSTH(outputdir)
 

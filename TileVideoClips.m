@@ -13,7 +13,6 @@ if contains(char(getHostName(java.net.InetAddress.getLocalHost)), 'talapas')
 else
     ext='mp4';
 end
-     ext='avi'
 
 cd(outputdir)
 

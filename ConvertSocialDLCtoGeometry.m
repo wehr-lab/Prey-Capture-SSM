@@ -545,6 +545,9 @@ fprintf('\ncomputing geometry...')
 % c=nose-to-cricket
 % then azimuth=arccos((a2 + b2 - c2)/(2ab))
 %
+% note that azimuth defined in this way ranges 0-180 (no negative values), and is the same for
+% left vs right. In other words, target at either 3 o'clock or 9 o'clock is 90° 
+%
 %in earlier version the nose was unreliably tracked, we switched to tailbase-headbase
 %I'll try nose first here
 a=sqrt((smbodyCOM1x-smnose1x).^2 + (smbodyCOM1y-smnose1y).^2);
