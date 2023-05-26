@@ -9,6 +9,9 @@ function GenerateStateEpochClips(local_movie_root,groupdatadir, outputdir)
 %we pull the source movie filenames from either groupdata, or by matching
 %with the filelist. In the future we'll want a more organized way of doing
 %this
+
+%I think this old version works with netanya's data
+
 cd(groupdatadir)
 files=lidocaine_new_preycapturefilelist;
 

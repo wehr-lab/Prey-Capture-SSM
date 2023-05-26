@@ -1,21 +1,37 @@
 # loads training data from mat-file, saves posterior probabilities into ssm_posterior_probs.mat
+# takes HMM params from inputs, call like this:
+# python ssm_preycap_var num_states kappa AR_lags
 
 import numpy 
 import ssm
 from scipy import io
 import time
 import os
+import sys
+
+num_states=int(sys.argv[1])
+kappa=int(sys.argv[2])
+AR_lags=int(sys.argv[3])
+print('num_states: ')
+print(num_states)
+print(type(num_states))
+print('kappa: ')
+print(kappa)
+print(type(kappa))
+print('AR lags: ')
+print(AR_lags)
+print(type(AR_lags))
 
 # Build an HMM instance and set parameters
 #np.random.seed(1)
-num_states = 10    # number of discrete states
+#num_states = 8    # number of discrete states
 observation_class = 'autoregressive'
-obs_dim = 6       # dimensionality of observation
+obs_dim = 12       # dimensionality of observation
 transitions = 'sticky'
-kappa = 1E6
-AR_lags =  1
+#kappa = 1E12
+#AR_lags =  10
 hmm = ssm.HMM(num_states, obs_dim,
-              observations=observation_class, observation_kwargs={'lags':AR_lags},
+              observations=observation_class, observation_kwargs={'lags': AR_lags},
               transitions=transitions, transition_kwargs={'kappa': kappa})
 print([num_states, kappa, AR_lags])
 
@@ -25,7 +41,7 @@ mat=io.loadmat('training_data.mat')
 X = mat['X']
 
 #fit hmm to data
-N_iters=5;
+N_iters=20;
 #N_iters=10
 hmm_lls = hmm.fit(X, method="em", num_iters=N_iters)
 Z = hmm.most_likely_states(X)

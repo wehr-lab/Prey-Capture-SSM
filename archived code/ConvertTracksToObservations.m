@@ -6,6 +6,8 @@ function ConvertTracksToObservations(groupdatadir, groupdatafilename, outputdir)
 % load groupdata and concatenate some variables into a single matrix, and
 % then save as a mat file
 % groupdatafilename: cell array of group data file names
+%
+%I think this was used with Netanya's data set
 
 X=[];
 Groupdata=[];
