@@ -15,13 +15,11 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
         %local path to python3
         pypath='/usr/local/bin/python3';
     case     'dyn-184-171-85-20.uoregon.edu'
-  % path and filename(s) of group data with DLC tracks
-        groupdatadir='/Volumes/Lennon/Documents/Analysis/PreyCapture data';
-        groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; %cell array of filenames
+        % path and filename(s) of group data with DLC tracks
         %root directory for source movies
-        local_movie_root='/Volumes/Lennon/Prey Capture/Netanyas Source Videos/';
+        local_movie_root='/Volumes/Projects/PreyCapture/ZIActivation';
         %output directory for results and generated video clips
-        outputroot='/Volumes/Lennon/Prey Capture';
+        outputroot='/Volumes/Projects/PreyCapture/ZIActivation/ssm_output';
         %local path to python3
         pypath='/usr/local/bin/python3';
         activate_venv_cmd='source ~/virtualenvironment/ssmenv/bin/activate'
@@ -38,7 +36,6 @@ switch char(java.net.InetAddress.getLocalHost.getHostName)
      case 'dyn-10-109-115-136.wless.uoregon.edu'
         % path and filename(s) of group data with DLC tracks
         groupdatadir='/Users/mollyshallow/Desktop/Wehr_Lab/PreyCaptureHMM';
-        groupdatafilename{1}='preycapture_groupdata_saline_1.mat'; %cell array of filenames
         %root directory for source movies
         local_movie_root='mount to rig2';
         %output directory for results and generated video clips
@@ -63,27 +60,22 @@ outputdir=sprintf('%s%sstate_epoch_clips-%s',outputroot, filesep, datestr(today)
 cd(outputroot)
 mkdir(outputdir)
 cd(outputdir)
-% [DirL     ist, dirlistpath] = uigetfile('*.txt', 'select DirList of data directories to scan');
-% if isequal(DirList,0) || isequal(dirlistpath,0)
-%     fprintf('\ncancelled')
-%     return
-% end
 
-% DirList=    'processedvids_ephys.txt';
-% dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Molly/';
-DirList=    'combined_05_12_21.txt';
-dirlistpath=    '/Volumes/wehrrig4.uoregon.edu/lab/djmaus/Data/Kip/';
+csvfilename='/Volumes/Projects/PreyCapture/ZIActivation/flattened_geometries_allmice_LD_satiated_subset.csv';
 
-
-ConvertGeometryToObservations(DirList, dirlistpath, outputdir)
+ConvertGeoCSVToObservations(csvfilename, outputdir)
 
 [repositorydir,~,~]=fileparts(which(mfilename));
-ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior.py');
+ssmfilename=fullfile(repositorydir, 'ssm_preycap_posterior_mcs.py');
 
 %run hmm python code in a system shell
 cmdstr=sprintf('%s %s', pypath, ssmfilename);
 system(activate_venv_cmd);
-system(cmdstr);
+[status,result] =system(cmdstr);
+if status
+    warning(sprintf('ssm system call failed with the following error message: %s', result))
+    keyboard
+end
 
 % since we decimated ConvertGeometryToObservations, now we un-decimate the Z returned by the hmm
 fprintf('\nundecimating...')

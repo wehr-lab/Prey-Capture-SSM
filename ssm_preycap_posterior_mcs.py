@@ -10,10 +10,10 @@ import os
 #np.random.seed(1)
 num_states = 10    # number of discrete states
 observation_class = 'autoregressive'
-obs_dim = 9       # dimensionality of observation
+obs_dim = 4       # dimensionality of observation
 transitions = 'sticky'
-kappa = 0
-AR_lags =  10
+kappa = 1E6
+AR_lags =  1
 hmm = ssm.HMM(num_states, obs_dim,
               observations=observation_class, observation_kwargs={'lags':AR_lags},
               transitions=transitions, transition_kwargs={'kappa': kappa})
@@ -21,7 +21,6 @@ print([num_states, kappa, AR_lags])
 
 #load data using loadmat
 mat=io.loadmat('training_data.mat')
-#mat=io.loadmat('C:/Users/Kat/Resilio Sync/Prey Capture/state_epoch_clips-06-Jan-2021/training_data.mat')
 X = mat['X']
 
 #fit hmm to data

@@ -14,13 +14,17 @@ if ~ismac
     return 
 end
 if nargin==1
-    rig='ion-nas'; %default 
+    rig='wehr-nas'; %default 
 else
-rig=varargin{1};
+    rig=varargin{1};
 end
 
 newpath= strrep(path, '\', '/');
 switch rig
+    case 'wehr-nas'
+        %you probably need to edit this for each use case
+        newpath= strrep(newpath, 'F:/Data/sfm', '/Volumes/Projects/temp');
+
     case 'rig1'
         newpath= strrep(newpath, 'E:', '/Volumes/wehrrig1b.uoregon.edu');
     case 'rig3'
