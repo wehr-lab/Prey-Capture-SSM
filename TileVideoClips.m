@@ -106,7 +106,7 @@ switch arraysize
     case '3x3'
         max_num_epochs=9;
         for k=[1:num_states]
-            out_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
+            out_movie_fullfilename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
             if talapas
                 vout = VideoWriter(out_movie_fullfilename);
             else
@@ -179,7 +179,7 @@ switch arraysize
     case '4x4'
         max_num_epochs=16;
         for k=[1:num_states]
-            out_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
+            out_movie_fullfilename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
             if talapas
                 vout = VideoWriter(out_movie_fullfilename);
             else
@@ -264,7 +264,7 @@ switch arraysize
     case '5x5'
         max_num_epochs=25;
         for k=[1:num_states]
-            out_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
+            out_movie_fullfilename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
             if talapas
                 vout = VideoWriter(out_movie_fullfilename);
             else
@@ -367,7 +367,7 @@ switch arraysize
     case '6x6'
         max_num_epochs=36;
         for k=[1:num_states]
-            out_movie_filename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
+            out_movie_fullfilename=fullfile(outputdir, sprintf('ssm_state_vid-comp-%d', k));
             if talapas
                 vout = VideoWriter(out_movie_fullfilename);
             else

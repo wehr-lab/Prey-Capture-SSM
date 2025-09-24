@@ -23,7 +23,8 @@ newpath= strrep(path, '\', '/');
 switch rig
     case 'wehr-nas'
         %you probably need to edit this for each use case
-        newpath= strrep(newpath, 'F:/Data/sfm', '/Volumes/Projects/temp');
+        % newpath= strrep(newpath, 'F:/Data/sfm', '/Volumes/Projects/temp');
+        newpath= strrep(newpath, '//wehr-nas.uoregon.edu/projects/', '/Volumes/Projects/');
 
     case 'rig1'
         newpath= strrep(newpath, 'E:', '/Volumes/wehrrig1b.uoregon.edu');
