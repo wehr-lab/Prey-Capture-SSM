@@ -1,7 +1,7 @@
 function ExtractMultipleVideoClips(movfilename, startframes, numframes, outputdir, outputfilename)
 % handles multiple startframes and numframes from the same video 
 % (startframes and numframes must be of the same length)
-% requires outputfilename to end in '_numeric' that will be incremented for
+% requires outputfilename to end in '_numeric' (e.g. _01) that will be incremented for
 % each successive clip after the first one
 %
 % extracts frames from a video and writes them to a new video
