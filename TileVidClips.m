@@ -15,7 +15,10 @@ function TileVidClips(outputdir)
 % is to use matlab to generate avi files and then convert to mp4 with
 % ffmpeg. That way I can play mp4s, or you can play avi with your favorite
 % player if you prefer. However, you'll have to specify your ffmpeg path.
-ffmpeg_path='/usr/local/bin/ffmpeg';
+
+%ffmpeg_path='/usr/local/bin/ffmpeg';
+ffmpeg_path= 'c:\ffmpeg\bin\ffmpeg';
+
 delete_avifiles=1; %delete the avi files to save disk space if you don't want them
 
 if nargin==0 outputdir=pwd;end
