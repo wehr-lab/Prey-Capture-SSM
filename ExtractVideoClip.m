@@ -8,7 +8,11 @@ v = VideoReader(movfilename);
 j=0;
 for f=startframe:startframe+numframes-1
     j=j+1;
-    vidFrames(:,:,:, j) = read(v, f) ;
+    vidFrame= read(v, f) ;
+    vidFrame = insertText(vidFrame,[20,125],outputfilename,...
+                    'FontSize',36, 'BoxColor', 'g',  ...
+                    'BoxOpacity',0.0,'TextColor','red');
+    vidFrames(:,:,:, j) = vidFrame;
 end
 out_movie_fullfilename=fullfile(outputdir, outputfilename);
 
@@ -17,3 +21,4 @@ open(vout)
 writeVideo(vout,vidFrames)
 close(vout)
 
+                
