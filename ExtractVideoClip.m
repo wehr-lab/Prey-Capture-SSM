@@ -1,16 +1,27 @@
-function ExtractVideoClip(movfilename, startframe, numframes, outputdir, outputfilename)
+function ExtractVideoClip(movfilename, startframe, numframes, outputdir, outputfilename, keyframe)
 %extracts frames from a video and writes them to a new video
-% usage: ExtractVideoClip(movfilename, startframe, numframes, outputdir, outputfilename)
+% usage: ExtractVideoClip(movfilename, startframe, numframes, outputdir, outputfilename, keyframe)
 %        movfilename should be an absolute path, 
 %        outputfilename is local to outputdir
+%        keyframe is a number between 1 and numframes, to plot a marker (e.g. to reference the time of an event, if your clips starts before the event)
+%        
+
 
 v = VideoReader(movfilename);
-% j=0;
-% for f=startframe:startframe+numframes-1
-%     j=j+1;
-%     vidFrames(:,:,:, j) = read(v, f) ;
-% end
 vidFrames = read(v, [startframe startframe+numframes-1]);
+
+if 1 %if desired, add text with clip name and keyframe marker, which takes an extra couple seconds 
+    for f=1:numframes
+        vidFrames(:,:,:, f) = insertText(vidFrames(:,:,:, f),[20,125],outputfilename,...
+            'FontSize',48, 'BoxColor', 'g',  ...
+            'BoxOpacity',0.0,'TextColor','red');
+    end
+    if nargin==6
+        for f=0:9
+            vidFrames(:,:,:, keyframe+f) = insertShape(vidFrames(:,:,:, keyframe+f),"filled-circle",[v.Width-90,90 80], ShapeColor=["green"]);
+        end
+    end
+end
 
 out_movie_fullfilename=fullfile(outputdir, outputfilename);
 
@@ -19,3 +30,4 @@ open(vout)
 writeVideo(vout,vidFrames)
 close(vout)
 clear v
+
